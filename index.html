@@ -50,19 +50,22 @@ function verzendMail() {
   const naam = document.getElementById('naam').value;
   const email = document.getElementById('email').value;
   const bericht = document.getElementById('bericht').value;
-const onderwerp = encodeURIComponent("Contact via website");
+
+  const onderwerp = "Contact via website";
   const body =
 `Naam: ${naam}
 
 E-mail: ${email}
 
 Bericht:
-${bericht}`
-);
+${bericht}`;
 
-window.location.href = "mailto:prof.dr.ferrari@outlook.com?subject=Contact%20via%20website&body=" + body;
-  
+  window.location.href =
+    "mailto:prof.dr.ferrari@outlook.com?subject=" +
+    encodeURIComponent(onderwerp) +
+    "&body=" +
+    encodeURIComponent(body);
 }
-</script>
+
 </body>
 </html>
