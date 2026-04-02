@@ -52,9 +52,12 @@ function verzendMail() {
   const bericht = document.getElementById('bericht').value;
 const onderwerp = encodeURIComponent("Contact via website");
   const body = encodeURIComponent(
-  "Naam: " + naam + "%0D%0A" +
-  "E-mail: " + email + "%0D%0A%0D%0A" +
-  "Bericht:%0D%0A" + bericht
+`Naam: ${naam}
+
+E-mail: ${email}
+
+Bericht:
+${bericht}`
 );
 
 window.location.href = "mailto:prof.dr.ferrari@outlook.com?subject=Contact%20via%20website&body=" + body;
