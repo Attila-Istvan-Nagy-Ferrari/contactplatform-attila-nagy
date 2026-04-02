@@ -39,11 +39,27 @@ input, textarea { width:100%; margin-bottom:10px; padding:10px; border-radius:10
 
 <div class="card">
   <h3>Contact</h3>
-  <a href="mailto:prof.dr.ferrari@outlook.com?subject=Contact%20via%20website"
-     style="display:inline-block;background:#1e90ff;color:#fff;text-decoration:none;padding:10px 15px;border-radius:10px;">
-     Mail verzenden
-  </a>
+  <input type="text" id="naam" placeholder="Naam" />
+  <input type="email" id="email" placeholder="E-mail" />
+  <textarea id="bericht" placeholder="Bericht"></textarea>
+  <button onclick="verzendMail()">Verzenden</button>
 </div>
-
+</div>
+<script>
+function verzendMail() {
+  const naam = document.getElementById('naam').value;
+  const email = document.getElementById('email').value;
+  const bericht = document.getElementById('bericht').value;
+const onderwerp = encodeURIComponent("Contact via website");
+  const body = encodeURIComponent(
+  "Naam: " + naam + "%0D%0A" +
+  "E-mail: " + email + "%0D%0A%0D%0A" +
+  "Bericht:%0D%0A" + bericht
+);
+  );
+window.location.href = "mailto:prof.dr.ferrari@outlook.com?subject=Contact%20via%20website&body=" + body;
+  
+}
+</script>
 </body>
 </html>
