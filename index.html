@@ -82,35 +82,51 @@
       <p><b>Laatste update</b> – Platform operationeel. Communicatie verloopt via dit kanaal.</p>
     </div>
 
-    <div class="card">
-      <h3>Contact</h3>
-      <input type="text" id="naam" placeholder="Naam" />
-      <input type="email" id="email" placeholder="E-mail" />
-      <textarea id="bericht" placeholder="Bericht"></textarea>
-      <button type="button" onclick="verzendMail()">Verzenden</button>
-    </div>
-  </div>
+   <div class="card">
+  <h3>Contact</h3>
+  <input type="text" id="naam" placeholder="Naam" />
+  <input type="email" id="email" placeholder="E-mail" />
+  <textarea id="bericht" placeholder="Bericht"></textarea>
 
-  <script>
-    function verzendMail() {
-      const naam = document.getElementById("naam").value;
-      const email = document.getElementById("email").value;
-      const bericht = document.getElementById("bericht").value;
+  <label id="question"></label>
+  <input type="text" id="humanCheck" placeholder="Antwoord" required>
 
-      const onderwerp = "Contact via website";
-      const body = `Naam: ${naam}
+  <button type="button" onclick="verzendMail()">Verzenden</button>
+</div>
+
+<script>
+let num1 = Math.floor(Math.random() * 5) + 1;
+let num2 = Math.floor(Math.random() * 5) + 1;
+let correctAnswer = num1 + num2;
+
+document.getElementById("question").innerText = "Wat is " + num1 + " + " + num2 + "?";
+
+function verzendMail() {
+  const answer = document.getElementById("humanCheck").value.trim();
+
+  if (parseInt(answer) !== correctAnswer) {
+    alert("Controle mislukt. Probeer opnieuw.");
+    return;
+  }
+
+  const naam = document.getElementById("naam").value;
+  const email = document.getElementById("email").value;
+  const bericht = document.getElementById("bericht").value;
+
+  const onderwerp = "Contact via website";
+  const body = `Naam: ${naam}
 
 E-mail: ${email}
 
 Bericht:
 ${bericht}`;
 
-      window.location.href =
-        "mailto:prof.dr.ferrari@outlook.com?subject=" +
-        encodeURIComponent(onderwerp) +
-        "&body=" +
-        encodeURIComponent(body);
-    }
-  </script>
+  window.location.href =
+    "mailto:prof.dr.ferari@outlook.com?subject=" +
+    encodeURIComponent(onderwerp) +
+    "&body=" +
+    encodeURIComponent(body);
+}
+</script>
 </body>
 </html>
