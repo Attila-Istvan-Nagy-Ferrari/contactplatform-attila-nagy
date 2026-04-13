@@ -86,7 +86,6 @@
       margin-top: 25px;
       padding: 25px;
       border-radius: 20px;
-      border: none;
       overflow: hidden;
       isolation: isolate;
       background: rgba(255, 255, 255, 0.03);
@@ -184,9 +183,19 @@
       <form action="https://formspree.io/f/xpqojggj" method="POST">
         <input type="hidden" name="_subject" value="Nieuw contactformulier ontvangen" />
         <input type="text" name="_gotcha" style="display: none" />
+
         <input type="text" name="naam" placeholder="Naam" required />
-        <input type="email" name="email" placeholder="E-mail" required />
+
+        <input
+          type="email"
+          name="email"
+          placeholder="E-mail"
+          required
+          pattern="[^@\s]+@[^@\s]+\.[^@\s]+"
+        />
+
         <textarea name="bericht" placeholder="Bericht" required></textarea>
+
         <button type="submit">Verzenden</button>
       </form>
 
