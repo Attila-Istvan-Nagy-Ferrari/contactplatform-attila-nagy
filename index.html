@@ -5,26 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Contactplatform Attila Nagy</title>
 
-  <!-- Inter font + optimalisatie -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --bg-main: #030712;
       --text-main: #f8fafc;
       --text-soft: #cbd5e1;
       --text-muted: #94a3b8;
-
-      --accent: #38bdf8;
-      --accent-deep: #0ea5e9;
-      --accent-soft: #60a5fa;
-      --accent-dark: #1d4ed8;
-
-      --border-blue: rgba(56, 189, 248, 0.24);
-      --glow-blue: rgba(56, 189, 248, 0.35);
-      --card-bg: rgba(255, 255, 255, 0.035);
+      --blue: #38bdf8;
+      --blue-light: #60a5fa;
+      --blue-deep: #0284c7;
     }
 
     * {
@@ -36,8 +28,8 @@
       font-family: 'Inter', Arial, sans-serif;
       color: var(--text-main);
       background:
-        radial-gradient(circle at top, rgba(56, 189, 248, 0.34), transparent 34%),
-        radial-gradient(circle at 80% 15%, rgba(14, 165, 233, 0.18), transparent 28%),
+        radial-gradient(circle at top, rgba(56, 189, 248, 0.40), transparent 32%),
+        radial-gradient(circle at 85% 18%, rgba(37, 99, 235, 0.25), transparent 35%),
         linear-gradient(180deg, #020617 0%, #000000 100%);
       min-height: 100vh;
     }
@@ -49,9 +41,9 @@
     }
 
     header {
-      border-bottom: 1px solid var(--border-blue);
       padding: 35px 0;
       text-align: center;
+      border-bottom: 1px solid rgba(56, 189, 248, 0.28);
     }
 
     h1 {
@@ -59,62 +51,42 @@
       font-size: clamp(2.2rem, 5vw, 3.5rem);
       font-weight: 800;
       letter-spacing: -0.02em;
-      background: linear-gradient(90deg, #ffffff, var(--accent), var(--accent-soft));
+      background: linear-gradient(90deg, #ffffff, var(--blue), var(--blue-light));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 35px rgba(56, 189, 248, 0.15);
+      text-shadow: 0 0 38px rgba(56, 189, 248, 0.28);
     }
 
     .hero {
       display: flex;
       flex-wrap: wrap;
-      gap: 32px;
+      gap: 34px;
       align-items: center;
       margin-top: 45px;
       padding: 34px;
       border-radius: 28px;
-      border: 1px solid var(--border-blue);
+      border: 1px solid rgba(56, 189, 248, 0.35);
       background:
-        radial-gradient(circle at 12% 25%, rgba(56, 189, 248, 0.12), transparent 30%),
+        linear-gradient(135deg, rgba(56, 189, 248, 0.13), rgba(255, 255, 255, 0.03)),
         rgba(255, 255, 255, 0.035);
       backdrop-filter: blur(12px);
       box-shadow:
-        0 0 45px rgba(56, 189, 248, 0.16),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.025);
+        0 0 50px rgba(56, 189, 248, 0.24),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.03);
     }
 
-    .profile-frame {
-      position: relative;
+    .profile-photo {
       width: 190px;
       height: 190px;
       flex: 0 0 190px;
       border-radius: 50%;
-      padding: 4px;
-      background:
-        radial-gradient(circle at 30% 20%, rgba(96, 165, 250, 0.95), transparent 32%),
-        linear-gradient(135deg, var(--accent-deep), var(--accent), var(--accent-dark));
-      box-shadow:
-        0 0 35px rgba(56, 189, 248, 0.55),
-        0 0 80px rgba(14, 165, 233, 0.25);
-    }
-
-    .profile-frame::after {
-      content: "";
-      position: absolute;
-      inset: -10px;
-      border-radius: 50%;
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      box-shadow: 0 0 30px rgba(56, 189, 248, 0.35);
-      pointer-events: none;
-    }
-
-    .profile-photo {
-      width: 100%;
-      height: 100%;
-      display: block;
-      border-radius: 50%;
       object-fit: cover;
-      border: 2px solid rgba(255, 255, 255, 0.18);
+      display: block;
+      border: 2px solid rgba(96, 165, 250, 0.95);
+      box-shadow:
+        0 0 35px rgba(56, 189, 248, 0.78),
+        0 0 90px rgba(14, 165, 233, 0.38);
+      background: #020617;
     }
 
     h2 {
@@ -133,24 +105,20 @@
       margin-top: 25px;
       padding: 25px;
       border-radius: 22px;
-      overflow: hidden;
-      isolation: isolate;
-      border: 1px solid rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.24);
       background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.025));
+        linear-gradient(180deg, rgba(56, 189, 248, 0.055), rgba(255, 255, 255, 0.025));
       backdrop-filter: blur(10px);
       box-shadow:
-        0 0 28px rgba(56, 189, 248, 0.13),
+        0 0 30px rgba(56, 189, 248, 0.17),
         inset 0 0 0 1px rgba(255, 255, 255, 0.02);
-      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      transition: 0.2s ease;
     }
 
     .card:hover {
       transform: translateY(-3px);
-      border-color: rgba(56, 189, 248, 0.32);
-      box-shadow:
-        0 0 35px rgba(56, 189, 248, 0.22),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+      border-color: rgba(56, 189, 248, 0.42);
+      box-shadow: 0 0 40px rgba(56, 189, 248, 0.30);
     }
 
     h3 {
@@ -165,7 +133,7 @@
       margin-bottom: 14px;
       padding: 14px;
       border-radius: 12px;
-      border: 1px solid rgba(56, 189, 248, 0.25);
+      border: 1px solid rgba(56, 189, 248, 0.34);
       background: #020617;
       color: #fff;
       font-size: 1rem;
@@ -175,10 +143,10 @@
 
     input:focus,
     textarea:focus {
-      border-color: var(--accent);
+      border-color: var(--blue);
       box-shadow:
-        0 0 10px rgba(56, 189, 248, 0.4),
-        0 0 25px rgba(14, 165, 233, 0.16);
+        0 0 12px rgba(56, 189, 248, 0.48),
+        0 0 30px rgba(14, 165, 233, 0.24);
       outline: none;
     }
 
@@ -189,7 +157,7 @@
 
     button {
       width: 100%;
-      background: linear-gradient(135deg, var(--accent-deep), var(--accent), var(--accent-soft));
+      background: linear-gradient(135deg, var(--blue-deep), var(--blue), var(--blue-light));
       color: #fff;
       border: none;
       padding: 14px 20px;
@@ -197,15 +165,17 @@
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
-      box-shadow: 0 0 22px rgba(56, 189, 248, 0.42);
+      box-shadow:
+        0 0 24px rgba(56, 189, 248, 0.52),
+        0 0 55px rgba(14, 165, 233, 0.25);
       transition: 0.2s;
     }
 
     button:hover {
-      transform: scale(1.05);
+      transform: scale(1.04);
       box-shadow:
-        0 0 30px rgba(56, 189, 248, 0.62),
-        0 0 60px rgba(14, 165, 233, 0.24);
+        0 0 36px rgba(56, 189, 248, 0.78),
+        0 0 78px rgba(14, 165, 233, 0.35);
     }
 
     .footer-note {
@@ -214,7 +184,6 @@
       font-size: 0.9rem;
     }
 
-    /* 📱 Mobiele finetune */
     @media (max-width: 768px) {
       p {
         line-height: 1.5;
@@ -227,7 +196,7 @@
         padding: 28px 22px;
       }
 
-      .profile-frame {
+      .profile-photo {
         width: 165px;
         height: 165px;
         flex-basis: 165px;
@@ -243,9 +212,7 @@
 
   <div class="container">
     <div class="hero">
-      <div class="profile-frame">
-        <img class="profile-photo" src="profile-website.png" alt="Profielfoto van Attila István Nagy" />
-      </div>
+      <img class="profile-photo" src="profile-website.png" alt="Profielfoto van Attila István Nagy" />
 
       <div>
         <h2>Attila István Nagy</h2>
