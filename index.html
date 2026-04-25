@@ -16,12 +16,10 @@
 --muted:#94a3b8;
 --blue:#1fb6ff;
 --blue2:#60a5fa;
---line:rgba(31,182,255,.22);
+--line:rgba(31,182,255,.24);
 }
 
-*{
-box-sizing:border-box;
-}
+*{box-sizing:border-box;}
 
 body{
 margin:0;
@@ -29,11 +27,12 @@ font-family:'Inter',Arial,sans-serif;
 color:var(--text);
 min-height:100vh;
 background:
-radial-gradient(circle at 50% -10%, rgba(31,182,255,.42), transparent 30%),
-radial-gradient(circle at 16% 34%, rgba(31,182,255,.16), transparent 24%),
-radial-gradient(circle at 84% 28%, rgba(96,165,250,.14), transparent 28%),
+radial-gradient(circle at 50% -10%, rgba(31,182,255,.48), transparent 32%),
+radial-gradient(circle at 14% 34%, rgba(31,182,255,.17), transparent 26%),
+radial-gradient(circle at 86% 26%, rgba(96,165,250,.15), transparent 28%),
 linear-gradient(180deg,#020617 0%,#000000 100%);
 position:relative;
+overflow-x:hidden;
 }
 
 body::before{
@@ -42,99 +41,118 @@ position:fixed;
 inset:0;
 pointer-events:none;
 background:
-linear-gradient(120deg, transparent 0%, rgba(31,182,255,.045) 38%, rgba(31,182,255,.095) 50%, rgba(96,165,250,.045) 62%, transparent 100%),
+linear-gradient(120deg, transparent 0%, rgba(31,182,255,.05) 38%, rgba(31,182,255,.10) 50%, rgba(96,165,250,.05) 62%, transparent 100%),
 radial-gradient(circle at 50% 42%, rgba(31,182,255,.08), transparent 42%);
 }
 
 .container{
-max-width:1280px;
+max-width:1380px;
 margin:0 auto;
-padding:24px;
+padding:26px;
 position:relative;
 z-index:1;
 }
 
 header{
-padding:28px 0;
+padding:26px 0 30px;
 text-align:center;
 border-bottom:1px solid var(--line);
-margin-bottom:28px;
+margin-bottom:30px;
 }
 
 h1{
 margin:0;
-font-size:clamp(2.2rem,5vw,3.6rem);
+font-size:clamp(2.4rem,5vw,4rem);
 font-weight:800;
-letter-spacing:-0.02em;
+letter-spacing:-0.03em;
 background:linear-gradient(90deg,#ffffff,var(--blue),var(--blue2));
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
+text-shadow:0 0 28px rgba(31,182,255,.20);
 }
 
 .hero,
 .card{
 border:1px solid var(--line);
-border-radius:26px;
+border-radius:28px;
 background:rgba(255,255,255,.03);
-backdrop-filter:blur(10px);
-box-shadow:0 0 34px rgba(31,182,255,.10);
+backdrop-filter:blur(12px);
+box-shadow:
+0 0 38px rgba(31,182,255,.10),
+inset 0 0 0 1px rgba(255,255,255,.02);
 }
 
 .hero{
 display:flex;
 align-items:center;
-gap:34px;
-padding:34px;
-margin-bottom:24px;
+gap:40px;
+padding:40px;
+margin-bottom:26px;
+background:
+linear-gradient(135deg, rgba(31,182,255,.10), rgba(255,255,255,.02)),
+rgba(255,255,255,.03);
 }
 
 .profile-photo{
-width:230px;
-height:230px;
+width:260px;
+height:260px;
 border-radius:50%;
 object-fit:cover;
 display:block;
+flex:0 0 260px;
 border:2px solid rgba(96,165,250,.95);
 box-shadow:
-0 0 26px rgba(31,182,255,.75),
-0 0 70px rgba(31,182,255,.28);
+0 0 30px rgba(31,182,255,.82),
+0 0 90px rgba(31,182,255,.34);
+}
+
+.hero-text{
+max-width:760px;
 }
 
 h2{
-margin:0 0 12px;
-font-size:2.4rem;
-font-weight:700;
+margin:0 0 14px;
+font-size:3rem;
+font-weight:800;
+line-height:1.05;
 }
 
 p{
-margin:0 0 14px;
-line-height:1.6;
+margin:0;
+line-height:1.7;
 color:var(--soft);
-font-size:1.05rem;
+font-size:1.15rem;
 }
 
 .card{
-padding:26px;
+padding:28px;
 margin-bottom:24px;
 }
 
 h3{
-margin:0 0 16px;
-font-size:1.8rem;
+margin:0 0 18px;
+font-size:2rem;
+font-weight:700;
+}
+
+.updates-text{
+font-size:1.08rem;
+line-height:1.7;
 }
 
 input,
 textarea{
 width:100%;
-padding:14px;
-margin-bottom:14px;
+padding:16px;
+margin-bottom:15px;
 border-radius:14px;
 border:1px solid rgba(31,182,255,.24);
 background:#020617;
 color:#fff;
-font-size:1rem;
+font-size:1.03rem;
 font-family:'Inter',Arial,sans-serif;
 outline:none;
+transition:.2s;
 }
 
 input:focus,
@@ -144,44 +162,63 @@ box-shadow:0 0 14px rgba(31,182,255,.34);
 }
 
 textarea{
-min-height:150px;
+min-height:170px;
 resize:vertical;
 }
 
 button{
 width:100%;
 border:none;
-padding:15px;
+padding:16px;
 border-radius:14px;
-font-size:1rem;
-font-weight:700;
+font-size:1.03rem;
+font-weight:800;
 cursor:pointer;
 color:#fff;
 background:linear-gradient(90deg,var(--blue),var(--blue2));
-box-shadow:0 0 24px rgba(31,182,255,.32);
+box-shadow:0 0 24px rgba(31,182,255,.34);
+transition:.2s;
 }
 
 button:hover{
 transform:translateY(-1px);
+box-shadow:0 0 34px rgba(31,182,255,.48);
 }
 
 .footer-note{
 margin-top:10px;
-font-size:.92rem;
+font-size:.95rem;
 color:var(--muted);
 }
 
-@media (max-width:900px){
+@media (max-width:980px){
 .hero{
 flex-direction:column;
 text-align:center;
+padding:34px 24px;
+gap:24px;
 }
+
 .profile-photo{
-width:180px;
-height:180px;
+width:210px;
+height:210px;
+flex-basis:210px;
 }
+
+.hero-text{
+max-width:100%;
+}
+
 h2{
-font-size:2rem;
+font-size:2.3rem;
+}
+
+p{
+font-size:1.05rem;
+}
+
+h3{
+font-size:1.7rem;
 }
 }
 </style>
@@ -198,18 +235,19 @@ font-size:2rem;
 <div class="hero">
 <img class="profile-photo" src="profile-website.png" alt="Profielfoto van Attila István Nagy">
 
-<div>
+<div class="hero-text">
 <h2>Attila István Nagy</h2>
 <p>
 Dit platform biedt ruimte voor communicatie onder eigen regie.
-Toegang en invulling worden zorgvuldig bepaald. Verdere ontwikkeling volgt.
+Toegang en invulling worden zorgvuldig bepaald.
+Verdere ontwikkeling volgt.
 </p>
 </div>
 </div>
 
 <div class="card">
 <h3>Updates</h3>
-<p><strong>Laatste update</strong> – Platform operationeel. Communicatie verloopt via dit kanaal.</p>
+<p class="updates-text"><strong>Laatste update</strong> – Platform operationeel. Communicatie verloopt via dit kanaal.</p>
 </div>
 
 <div class="card">
