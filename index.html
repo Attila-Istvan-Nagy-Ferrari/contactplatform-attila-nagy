@@ -17,6 +17,7 @@
       --blue: #38bdf8;
       --blue-light: #60a5fa;
       --blue-deep: #0284c7;
+      --dark: #020617;
     }
 
     * {
@@ -28,8 +29,8 @@
       font-family: 'Inter', Arial, sans-serif;
       color: var(--text-main);
       background:
-        radial-gradient(circle at top, rgba(56, 189, 248, 0.40), transparent 32%),
-        radial-gradient(circle at 85% 18%, rgba(37, 99, 235, 0.25), transparent 35%),
+        radial-gradient(circle at top, rgba(56, 189, 248, 0.42), transparent 32%),
+        radial-gradient(circle at 85% 15%, rgba(96, 165, 250, 0.20), transparent 34%),
         linear-gradient(180deg, #020617 0%, #000000 100%);
       min-height: 100vh;
     }
@@ -43,7 +44,7 @@
     header {
       padding: 35px 0;
       text-align: center;
-      border-bottom: 1px solid rgba(56, 189, 248, 0.28);
+      border-bottom: 1px solid rgba(56, 189, 248, 0.30);
     }
 
     h1 {
@@ -54,7 +55,7 @@
       background: linear-gradient(90deg, #ffffff, var(--blue), var(--blue-light));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 38px rgba(56, 189, 248, 0.28);
+      text-shadow: 0 0 40px rgba(56, 189, 248, 0.28);
     }
 
     .hero {
@@ -65,14 +66,14 @@
       margin-top: 45px;
       padding: 34px;
       border-radius: 28px;
-      border: 1px solid rgba(56, 189, 248, 0.35);
+      border: 1px solid rgba(56, 189, 248, 0.38);
       background:
-        linear-gradient(135deg, rgba(56, 189, 248, 0.13), rgba(255, 255, 255, 0.03)),
-        rgba(255, 255, 255, 0.035);
+        radial-gradient(circle at 15% 20%, rgba(56, 189, 248, 0.16), transparent 30%),
+        linear-gradient(135deg, rgba(56, 189, 248, 0.10), rgba(255, 255, 255, 0.035));
       backdrop-filter: blur(12px);
       box-shadow:
-        0 0 50px rgba(56, 189, 248, 0.24),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+        0 0 55px rgba(56, 189, 248, 0.25),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.035);
     }
 
     .profile-photo {
@@ -84,9 +85,9 @@
       display: block;
       border: 2px solid rgba(96, 165, 250, 0.95);
       box-shadow:
-        0 0 35px rgba(56, 189, 248, 0.78),
-        0 0 90px rgba(14, 165, 233, 0.38);
-      background: #020617;
+        0 0 35px rgba(56, 189, 248, 0.82),
+        0 0 95px rgba(14, 165, 233, 0.42);
+      background: var(--dark);
     }
 
     h2 {
@@ -105,20 +106,20 @@
       margin-top: 25px;
       padding: 25px;
       border-radius: 22px;
-      border: 1px solid rgba(56, 189, 248, 0.24);
+      border: 1px solid rgba(56, 189, 248, 0.25);
       background:
-        linear-gradient(180deg, rgba(56, 189, 248, 0.055), rgba(255, 255, 255, 0.025));
+        linear-gradient(180deg, rgba(56, 189, 248, 0.06), rgba(255, 255, 255, 0.025));
       backdrop-filter: blur(10px);
       box-shadow:
-        0 0 30px rgba(56, 189, 248, 0.17),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+        0 0 32px rgba(56, 189, 248, 0.18),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.025);
       transition: 0.2s ease;
     }
 
     .card:hover {
       transform: translateY(-3px);
-      border-color: rgba(56, 189, 248, 0.42);
-      box-shadow: 0 0 40px rgba(56, 189, 248, 0.30);
+      border-color: rgba(56, 189, 248, 0.44);
+      box-shadow: 0 0 42px rgba(56, 189, 248, 0.32);
     }
 
     h3 {
@@ -145,8 +146,8 @@
     textarea:focus {
       border-color: var(--blue);
       box-shadow:
-        0 0 12px rgba(56, 189, 248, 0.48),
-        0 0 30px rgba(14, 165, 233, 0.24);
+        0 0 12px rgba(56, 189, 248, 0.50),
+        0 0 30px rgba(14, 165, 233, 0.25);
       outline: none;
     }
 
@@ -166,16 +167,16 @@
       font-weight: 600;
       cursor: pointer;
       box-shadow:
-        0 0 24px rgba(56, 189, 248, 0.52),
-        0 0 55px rgba(14, 165, 233, 0.25);
+        0 0 25px rgba(56, 189, 248, 0.55),
+        0 0 58px rgba(14, 165, 233, 0.27);
       transition: 0.2s;
     }
 
     button:hover {
       transform: scale(1.04);
       box-shadow:
-        0 0 36px rgba(56, 189, 248, 0.78),
-        0 0 78px rgba(14, 165, 233, 0.35);
+        0 0 38px rgba(56, 189, 248, 0.82),
+        0 0 80px rgba(14, 165, 233, 0.36);
     }
 
     .footer-note {
