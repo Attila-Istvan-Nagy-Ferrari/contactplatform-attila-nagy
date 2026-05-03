@@ -253,7 +253,6 @@ font-size:.92rem;
 color:var(--muted);
 }
 
-/* MOBIEL COMPACT */
 @media (max-width:980px){
 
 .container{
@@ -391,14 +390,14 @@ pattern="[^@\s]+@[^@\s]+\.[^@\s]+">
 <textarea name="bericht" placeholder="Bericht" required></textarea>
 
 <label class="file-upload">
-<span>Bijlage toevoegen <small>(optioneel, max. 4 bestanden, 10 MB per bestand)</small></span>
+<span>Bijlage toevoegen <small>(optioneel)</small></span>
 <input
 type="file"
 name="attachment"
 id="attachment"
 multiple
 accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/png">
-<small class="file-name" id="fileName">Toegestaan: JPG, PNG, PDF, DOC en DOCX. Maximaal 25 MB totaal.</small>
+<small class="file-name" id="fileName">Max. 4 bestanden • 10 MB per bestand • 25 MB totaal<br>Toegestaan: JPG, PNG, PDF, DOC, DOCX</small>
 </label>
 
 <button type="submit">Verzenden</button>
@@ -420,16 +419,16 @@ const maxFileSize=10*1024*1024;
 const maxTotalSize=25*1024*1024;
 const maxFiles=4;
 
-const defaultFileText="Toegestaan: JPG, PNG, PDF, DOC en DOCX. Maximaal 25 MB totaal.";
+const defaultFileText="Max. 4 bestanden • 10 MB per bestand • 25 MB totaal\nToegestaan: JPG, PNG, PDF, DOC, DOCX";
 
 function resetAttachment(){
 attachment.value="";
-fileName.textContent=defaultFileText;
+fileName.innerHTML="Max. 4 bestanden • 10 MB per bestand • 25 MB totaal<br>Toegestaan: JPG, PNG, PDF, DOC, DOCX";
 }
 
 function validateFiles(showAlert=true){
 if(!attachment||!attachment.files||attachment.files.length===0){
-fileName.textContent=defaultFileText;
+resetAttachment();
 return true;
 }
 
