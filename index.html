@@ -169,6 +169,44 @@ resize:vertical;
 line-height:1.35;
 }
 
+.file-upload{
+display:block;
+width:100%;
+padding:15px;
+margin-bottom:12px;
+border-radius:14px;
+border:1px solid rgba(31,182,255,.24);
+background:#020617;
+color:var(--soft);
+font-size:1rem;
+font-family:'Inter',Arial,sans-serif;
+cursor:pointer;
+transition:.2s;
+}
+
+.file-upload:hover{
+border-color:var(--blue);
+box-shadow:0 0 14px rgba(31,182,255,.22);
+}
+
+.file-upload span{
+display:block;
+margin-bottom:8px;
+font-weight:600;
+}
+
+.file-upload small{
+color:var(--muted);
+font-weight:400;
+}
+
+.file-upload input{
+margin:0;
+padding:0;
+border:none;
+background:transparent;
+}
+
 button{
 width:100%;
 border:none;
@@ -264,6 +302,12 @@ min-height:130px;
 line-height:1.20;
 }
 
+.file-upload{
+padding:13px;
+margin-bottom:9px;
+font-size:1rem;
+}
+
 button{
 padding:14px;
 }
@@ -305,7 +349,7 @@ font-size:.88rem;
 <div class="card">
 <h3>Contact</h3>
 
-<form action="https://formspree.io/f/xpqojggj" method="POST">
+<form action="https://formspree.io/f/xpqojggj" method="POST" enctype="multipart/form-data">
 <input type="hidden" name="_subject" value="Nieuw contactformulier ontvangen">
 <input type="text" name="_gotcha" style="display:none">
 
@@ -320,6 +364,11 @@ pattern="[^@\s]+@[^@\s]+\.[^@\s]+">
 
 <textarea name="bericht" placeholder="Bericht" required></textarea>
 
+<label class="file-upload">
+<span>Bijlage toevoegen <small>(optioneel, max. 10 MB)</small></span>
+<input type="file" name="attachment" id="attachment" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+</label>
+
 <button type="submit">Verzenden</button>
 </form>
 
@@ -331,12 +380,32 @@ pattern="[^@\s]+@[^@\s]+\.[^@\s]+">
 <script>
 let lastSubmit=0;
 
-document.querySelector("form").addEventListener("submit",function(e){
+const form=document.querySelector("form");
+const attachment=document.getElementById("attachment");
+const maxFileSize=10*1024*1024;
+
+if(attachment){
+attachment.addEventListener("change",function(){
+if(this.files[0]&&this.files[0].size>maxFileSize){
+alert("Bestand te groot. Maximaal 10 MB toegestaan.");
+this.value="";
+}
+});
+}
+
+form.addEventListener("submit",function(e){
 const now=Date.now();
 
 if(now-lastSubmit<5000){
 e.preventDefault();
 alert("Even wachten...");
+return;
+}
+
+if(attachment&&attachment.files[0]&&attachment.files[0].size>maxFileSize){
+e.preventDefault();
+alert("Bestand te groot. Maximaal 10 MB toegestaan.");
+attachment.value="";
 return;
 }
 
