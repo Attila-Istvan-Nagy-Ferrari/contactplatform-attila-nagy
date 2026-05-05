@@ -396,8 +396,8 @@ type="file"
 name="attachment"
 id="attachment"
 multiple
-accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/png">
-<small class="file-name" id="fileName">Max. 4 bestanden • 10 MB per bestand • 25 MB totaal<br>Toegestaan: JPG, PNG, PDF, DOC, DOCX</small>
+accept=".jpg,.jpeg,.png,.pdf,.docx,.xlsx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,image/jpeg,image/png">
+<small class="file-name" id="fileName">Max. 4 bestanden • 10 MB per bestand • 25 MB totaal<br>Toegestaan: JPG, PNG, PDF, DOCX, XLSX</small>
 </label>
 
 <button type="submit">Verzenden</button>
@@ -418,12 +418,17 @@ const fileName=document.getElementById("fileName");
 const maxFileSize=10*1024*1024;
 const maxTotalSize=25*1024*1024;
 const maxFiles=4;
+const allowedExtensions=["jpg","jpeg","png","pdf","docx","xlsx"];
 
-const defaultFileText="Max. 4 bestanden • 10 MB per bestand • 25 MB totaal\nToegestaan: JPG, PNG, PDF, DOC, DOCX";
+const defaultFileText="Max. 4 bestanden • 10 MB per bestand • 25 MB totaal\nToegestaan: JPG, PNG, PDF, DOCX, XLSX";
 
 function resetAttachment(){
 attachment.value="";
-fileName.innerHTML="Max. 4 bestanden • 10 MB per bestand • 25 MB totaal<br>Toegestaan: JPG, PNG, PDF, DOC, DOCX";
+fileName.innerHTML="Max. 4 bestanden • 10 MB per bestand • 25 MB totaal<br>Toegestaan: JPG, PNG, PDF, DOCX, XLSX";
+}
+
+function getFileExtension(fileName){
+return fileName.split(".").pop().toLowerCase();
 }
 
 function validateFiles(showAlert=true){
@@ -445,6 +450,16 @@ return false;
 
 for(const file of files){
 totalSize+=file.size;
+
+const extension=getFileExtension(file.name);
+
+if(!allowedExtensions.includes(extension)){
+if(showAlert){
+alert("Bestandstype niet toegestaan: "+file.name+". Toegestaan zijn: JPG, PNG, PDF, DOCX en XLSX.");
+}
+resetAttachment();
+return false;
+}
 
 if(file.size>maxFileSize){
 if(showAlert){
