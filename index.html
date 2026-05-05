@@ -440,11 +440,6 @@ const allowedExtensions=[
 "xlsx"
 ];
 
-function resetAttachment(){
-attachment.value="";
-fileName.innerHTML="Max. 4 bestanden • 10 MB per bestand • 25 MB totaal<br>Toegestaan: JPG, PNG, PDF, DOCX, XLSX";
-}
-
 function getFileExtension(fileName){
 return fileName.split(".").pop().toLowerCase();
 }
@@ -520,12 +515,6 @@ validateFiles(true);
 }
 
 form.addEventListener("submit",function(e){
-
-if(!form.checkValidity()){
-e.preventDefault();
-form.reportValidity();
-return;
-}
 
 const now=Date.now();
 
