@@ -378,7 +378,11 @@ font-size:.88rem;
 <input type="hidden" name="_subject" value="Nieuw contactformulier ontvangen">
 <input type="text" name="_gotcha" style="display:none">
 
-<input type="text" name="naam" placeholder="Naam" required>
+<input
+type="text"
+name="naam"
+placeholder="Naam"
+required>
 
 <input
 type="email"
@@ -387,17 +391,25 @@ placeholder="E-mail"
 required
 pattern="[^@\s]+@[^@\s]+\.[^@\s]+">
 
-<textarea name="bericht" placeholder="Bericht" required></textarea>
+<textarea
+name="bericht"
+placeholder="Bericht"
+required></textarea>
 
 <label class="file-upload">
 <span>Bijlage toevoegen <small>(optioneel)</small></span>
+
 <input
 type="file"
 name="attachment"
 id="attachment"
 multiple
 accept=".jpg,.jpeg,.png,.pdf,.docx,.xlsx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,image/jpeg,image/png">
-<small class="file-name" id="fileName">Max. 4 bestanden • 10 MB per bestand • 25 MB totaal<br>Toegestaan: JPG, PNG, PDF, DOCX, XLSX</small>
+
+<small class="file-name" id="fileName">
+Max. 4 bestanden • 10 MB per bestand • 25 MB totaal<br>
+Toegestaan: JPG, PNG, PDF, DOCX, XLSX
+</small>
 </label>
 
 <button type="submit">Verzenden</button>
@@ -418,7 +430,15 @@ const fileName=document.getElementById("fileName");
 const maxFileSize=10*1024*1024;
 const maxTotalSize=25*1024*1024;
 const maxFiles=4;
-const allowedExtensions=["jpg","jpeg","png","pdf","docx","xlsx"];
+
+const allowedExtensions=[
+"jpg",
+"jpeg",
+"png",
+"pdf",
+"docx",
+"xlsx"
+];
 
 function resetAttachment(){
 attachment.value="";
@@ -430,49 +450,55 @@ return fileName.split(".").pop().toLowerCase();
 }
 
 function validateFiles(showAlert=true){
-if(!attachment||!attachment.files||attachment.files.length===0){
-resetAttachment();
+
+if(!attachment || !attachment.files || attachment.files.length===0){
 return true;
 }
 
 const files=Array.from(attachment.files);
+
 let totalSize=0;
 
 if(files.length>maxFiles){
+
 if(showAlert){
 alert("Je kunt maximaal 4 bestanden tegelijk toevoegen.");
 }
-resetAttachment();
+
 return false;
 }
 
 for(const file of files){
+
 totalSize+=file.size;
 
 const extension=getFileExtension(file.name);
 
 if(!allowedExtensions.includes(extension)){
+
 if(showAlert){
-alert("Bestandstype niet toegestaan: "+file.name+". Toegestaan zijn: JPG, PNG, PDF, DOCX en XLSX.");
+alert("Bestandstype niet toegestaan: "+file.name+".");
 }
-resetAttachment();
+
 return false;
 }
 
 if(file.size>maxFileSize){
+
 if(showAlert){
 alert("Bestand te groot: "+file.name+". Maximaal 10 MB per bestand toegestaan.");
 }
-resetAttachment();
+
 return false;
 }
 }
 
 if(totalSize>maxTotalSize){
+
 if(showAlert){
 alert("De totale bijlagegrootte is te hoog. Maximaal 25 MB totaal toegestaan.");
 }
-resetAttachment();
+
 return false;
 }
 
@@ -486,26 +512,38 @@ return true;
 }
 
 if(attachment){
+
 attachment.addEventListener("change",function(){
 validateFiles(true);
 });
+
 }
 
 form.addEventListener("submit",function(e){
+
+if(!form.checkValidity()){
+e.preventDefault();
+form.reportValidity();
+return;
+}
+
 const now=Date.now();
 
 if(now-lastSubmit<5000){
+
 e.preventDefault();
 alert("Even wachten...");
 return;
 }
 
 if(!validateFiles(true)){
+
 e.preventDefault();
 return;
 }
 
 lastSubmit=now;
+
 });
 </script>
 
