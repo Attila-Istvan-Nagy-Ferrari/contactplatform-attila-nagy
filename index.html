@@ -420,8 +420,6 @@ const maxTotalSize=25*1024*1024;
 const maxFiles=4;
 const allowedExtensions=["jpg","jpeg","png","pdf","docx","xlsx"];
 
-const defaultFileText="Max. 4 bestanden • 10 MB per bestand • 25 MB totaal\nToegestaan: JPG, PNG, PDF, DOCX, XLSX";
-
 function resetAttachment(){
 attachment.value="";
 fileName.innerHTML="Max. 4 bestanden • 10 MB per bestand • 25 MB totaal<br>Toegestaan: JPG, PNG, PDF, DOCX, XLSX";
@@ -508,6 +506,11 @@ return;
 }
 
 lastSubmit=now;
+
+setTimeout(function(){
+form.reset();
+resetAttachment();
+},500);
 });
 </script>
 
