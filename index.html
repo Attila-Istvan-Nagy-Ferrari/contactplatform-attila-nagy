@@ -387,9 +387,9 @@ required>
 <input
 type="email"
 name="email"
+id="email"
 placeholder="E-mail"
-required
-pattern="[^@\s]+@[^@\s]+\.[^@\s]+">
+required>
 
 <textarea
 name="bericht"
@@ -426,6 +426,7 @@ let lastSubmit=0;
 const form=document.querySelector("form");
 const attachment=document.getElementById("attachment");
 const fileName=document.getElementById("fileName");
+const emailInput=document.getElementById("email");
 
 const maxFileSize=10*1024*1024;
 const maxTotalSize=25*1024*1024;
@@ -442,6 +443,19 @@ const allowedExtensions=[
 
 function getFileExtension(fileName){
 return fileName.split(".").pop().toLowerCase();
+}
+
+function validateEmail(){
+const email=emailInput.value.trim();
+const emailPattern=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+if(!emailPattern.test(email)){
+alert("Vul een geldig e-mailadres in.");
+emailInput.focus();
+return false;
+}
+
+return true;
 }
 
 function validateFiles(showAlert=true){
@@ -515,6 +529,11 @@ validateFiles(true);
 }
 
 form.addEventListener("submit",function(e){
+
+if(!validateEmail()){
+e.preventDefault();
+return;
+}
 
 const now=Date.now();
 
