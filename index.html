@@ -16,8 +16,8 @@
 --muted:#94a3b8;
 --blue:#1fb6ff;
 --blue2:#60a5fa;
---blue3:#93e7ff;
---line:rgba(31,182,255,.28);
+--blue3:#9beaff;
+--line:rgba(31,182,255,.30);
 }
 
 *{
@@ -30,10 +30,10 @@ font-family:'Inter',Arial,sans-serif;
 color:var(--text);
 min-height:100vh;
 background:
-radial-gradient(circle at 50% -10%, rgba(31,182,255,.58), transparent 34%),
-radial-gradient(circle at 16% 32%, rgba(31,182,255,.22), transparent 28%),
-radial-gradient(circle at 84% 26%, rgba(96,165,250,.22), transparent 30%),
-linear-gradient(180deg,#071122 0%,#020617 55%,#000814 100%);
+radial-gradient(circle at 50% -10%, rgba(31,182,255,.60), transparent 34%),
+radial-gradient(circle at 14% 30%, rgba(31,182,255,.20), transparent 28%),
+radial-gradient(circle at 86% 24%, rgba(96,165,250,.22), transparent 30%),
+linear-gradient(180deg,#071120 0%,#040b16 52%,#020617 100%);
 position:relative;
 overflow-x:hidden;
 }
@@ -67,22 +67,29 @@ h1{
 margin:0;
 font-size:clamp(2.4rem,5vw,4rem);
 font-weight:800;
-letter-spacing:-0.035em;
-line-height:1.05;
-background:linear-gradient(90deg,#ffffff 0%,#bff3ff 26%,#54d7ff 52%,#1fb6ff 74%,#60a5fa 100%);
--webkit-background-clip:text;
-background-clip:text;
--webkit-text-fill-color:transparent;
-color:transparent;
+letter-spacing:-0.04em;
+line-height:1.03;
 text-shadow:
-0 0 10px rgba(147,231,255,.35),
-0 0 32px rgba(31,182,255,.32),
-0 0 58px rgba(96,165,250,.20);
+0 0 8px rgba(170,235,255,.30),
+0 0 28px rgba(31,182,255,.30),
+0 0 58px rgba(31,182,255,.20);
 }
 
 .title-platform,
 .title-name{
 display:inline;
+-webkit-background-clip:text;
+background-clip:text;
+-webkit-text-fill-color:transparent;
+color:transparent;
+}
+
+.title-platform{
+background-image:linear-gradient(90deg,#ffffff 0%,#d9f7ff 24%,#8be5ff 52%,#1fb6ff 100%);
+}
+
+.title-name{
+background-image:linear-gradient(90deg,#1fb6ff 0%,#38caff 38%,#60a5fa 100%);
 }
 
 .hero,
@@ -103,8 +110,12 @@ gap:40px;
 padding:38px;
 margin-bottom:22px;
 background:
-linear-gradient(135deg, rgba(31,182,255,.14), rgba(96,165,250,.05), rgba(255,255,255,.025)),
-rgba(255,255,255,.04);
+linear-gradient(135deg, rgba(31,182,255,.16) 0%, rgba(96,165,250,.07) 28%, rgba(255,255,255,.03) 55%, rgba(31,182,255,.10) 100%),
+rgba(255,255,255,.045);
+box-shadow:
+0 0 45px rgba(31,182,255,.16),
+0 0 90px rgba(31,182,255,.08),
+inset 0 0 0 1px rgba(255,255,255,.025);
 }
 
 .profile-photo{
@@ -116,9 +127,9 @@ display:block;
 flex:0 0 260px;
 border:2px solid rgba(147,231,255,.95);
 box-shadow:
-0 0 28px rgba(147,231,255,.85),
-0 0 68px rgba(31,182,255,.58),
-0 0 115px rgba(96,165,250,.34);
+0 0 30px rgba(120,220,255,.90),
+0 0 75px rgba(31,182,255,.55),
+0 0 130px rgba(96,165,250,.32);
 }
 
 .hero-text{
@@ -229,8 +240,8 @@ border-radius:10px;
 font-family:'Inter',Arial,sans-serif;
 font-weight:700;
 color:#fff;
-background:linear-gradient(90deg,#168fd0,var(--blue2));
-box-shadow:0 0 14px rgba(31,182,255,.25);
+background:linear-gradient(90deg,#1798dd 0%,#3cbcff 55%,#60a5fa 100%);
+box-shadow:0 0 18px rgba(31,182,255,.24);
 cursor:pointer;
 }
 
@@ -252,13 +263,13 @@ font-weight:800;
 cursor:pointer;
 color:#fff;
 background:linear-gradient(90deg,var(--blue),var(--blue2));
-box-shadow:0 0 26px rgba(31,182,255,.40);
+box-shadow:0 0 28px rgba(31,182,255,.42);
 transition:.2s;
 }
 
 button:hover{
 transform:translateY(-1px);
-box-shadow:0 0 38px rgba(31,182,255,.54);
+box-shadow:0 0 40px rgba(31,182,255,.56);
 }
 
 .footer-note{
@@ -281,23 +292,22 @@ margin-bottom:18px;
 }
 
 h1{
-font-size:clamp(2.15rem,8vw,3.1rem);
-line-height:1.03;
+font-size:clamp(2.15rem,8vw,3rem);
+line-height:1.02;
 letter-spacing:-0.04em;
-background:linear-gradient(90deg,#ffffff 0%,#bff3ff 22%,#54d7ff 48%,#1fb6ff 72%,#60a5fa 100%);
--webkit-background-clip:text;
-background-clip:text;
--webkit-text-fill-color:transparent;
-color:transparent;
-text-shadow:
-0 0 8px rgba(147,231,255,.32),
-0 0 24px rgba(31,182,255,.30),
-0 0 44px rgba(96,165,250,.18);
 }
 
 .title-platform,
 .title-name{
 display:block;
+}
+
+.title-platform{
+background-image:linear-gradient(90deg,#ffffff 0%,#d9f7ff 24%,#8be5ff 52%,#1fb6ff 100%);
+}
+
+.title-name{
+background-image:linear-gradient(90deg,#1fb6ff 0%,#38caff 42%,#60a5fa 100%);
 }
 
 .hero{
