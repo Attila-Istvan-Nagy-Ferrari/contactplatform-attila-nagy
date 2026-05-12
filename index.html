@@ -78,6 +78,11 @@ text-shadow:
 0 0 22px rgba(31,182,255,.14);
 }
 
+.title-platform,
+.title-name{
+display:inline;
+}
+
 .hero,
 .card{
 border:1px solid var(--line);
@@ -109,8 +114,8 @@ display:block;
 flex:0 0 260px;
 border:2px solid rgba(96,165,250,.95);
 box-shadow:
-0 0 30px rgba(31,182,255,.82),
-0 0 90px rgba(31,182,255,.34);
+0 0 34px rgba(31,182,255,.88),
+0 0 98px rgba(31,182,255,.38);
 }
 
 .hero-text{
@@ -277,11 +282,16 @@ line-height:1.03;
 letter-spacing:-0.04em;
 }
 
+.title-platform,
+.title-name{
+display:block;
+}
+
 .hero{
 flex-direction:column;
 text-align:center;
 padding:22px 18px;
-gap:10px;
+gap:14px;
 margin-bottom:14px;
 }
 
@@ -363,7 +373,7 @@ font-size:.88rem;
 <body>
 
 <header class="container">
-<h1>Contactplatform Attila István Nagy</h1>
+<h1><span class="title-platform">Contactplatform</span> <span class="title-name">Attila István Nagy</span></h1>
 </header>
 
 <div class="container">
