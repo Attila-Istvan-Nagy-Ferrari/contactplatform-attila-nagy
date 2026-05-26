@@ -22,7 +22,6 @@
 
 *{
 box-sizing:border-box;
-caret-color:transparent;
 }
 
 *:focus{
@@ -202,7 +201,7 @@ background:rgba(2,6,23,.72);
 color:#fff;
 font-size:1rem;
 font-family:'Inter',Arial,sans-serif;
-outline:none;
+outline:none !important;
 transition:.2s;
 box-shadow:inset 0 0 0 1px rgba(255,255,255,.025);
 caret-color:transparent;
@@ -218,7 +217,7 @@ textarea:focus{
 border-color:rgba(125,211,252,.25);
 box-shadow:inset 0 0 0 1px rgba(255,255,255,.025);
 background:rgba(2,12,32,.82);
-outline:none;
+outline:none !important;
 caret-color:transparent;
 }
 
@@ -641,6 +640,22 @@ return;
 }
 
 lastSubmit=now;
+
+});
+
+document.addEventListener("selectionchange",function(){
+
+const active=document.activeElement;
+
+if(active && (active.tagName==="INPUT" || active.tagName==="TEXTAREA")){
+return;
+}
+
+const selection=window.getSelection();
+
+if(selection){
+selection.removeAllRanges();
+}
 
 });
 </script>
