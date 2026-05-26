@@ -24,10 +24,6 @@
 box-sizing:border-box;
 }
 
-*:focus{
-outline:none !important;
-}
-
 body{
 margin:0;
 font-family:'Inter',Arial,sans-serif;
@@ -101,16 +97,6 @@ text-shadow:0 0 18px rgba(47,199,255,.18);
 display:inline;
 }
 
-h1,
-h2,
-h3,
-.hero-text p,
-.updates-text,
-.footer-note{
-user-select:none;
--webkit-user-select:none;
-}
-
 .hero,
 .card{
 border:1px solid var(--line);
@@ -159,7 +145,7 @@ margin:0 0 8px;
 font-size:3rem;
 font-weight:800;
 line-height:1.03;
-text-shadow:0 0 10px rgba(47,199,255,.10);
+text-shadow:0 0 22px rgba(47,199,255,.16);
 }
 
 p{
@@ -201,10 +187,9 @@ background:rgba(2,6,23,.72);
 color:#fff;
 font-size:1rem;
 font-family:'Inter',Arial,sans-serif;
-outline:none !important;
+outline:none;
 transition:.2s;
 box-shadow:inset 0 0 0 1px rgba(255,255,255,.025);
-caret-color:transparent;
 }
 
 input::placeholder,
@@ -214,11 +199,11 @@ color:rgba(215,230,247,.62);
 
 input:focus,
 textarea:focus{
-border-color:rgba(125,211,252,.25);
-box-shadow:inset 0 0 0 1px rgba(255,255,255,.025);
-background:rgba(2,12,32,.82);
-outline:none !important;
-caret-color:transparent;
+border-color:var(--blue3);
+box-shadow:
+0 0 18px rgba(47,199,255,.35),
+inset 0 0 0 1px rgba(255,255,255,.04);
+background:rgba(2,12,32,.86);
 }
 
 textarea{
@@ -358,7 +343,7 @@ height:195px;
 flex-basis:195px;
 }
 
-.hero-text{
+hero-text{
 max-width:100%;
 }
 
@@ -640,22 +625,6 @@ return;
 }
 
 lastSubmit=now;
-
-});
-
-document.addEventListener("selectionchange",function(){
-
-const active=document.activeElement;
-
-if(active && (active.tagName==="INPUT" || active.tagName==="TEXTAREA")){
-return;
-}
-
-const selection=window.getSelection();
-
-if(selection){
-selection.removeAllRanges();
-}
 
 });
 </script>
