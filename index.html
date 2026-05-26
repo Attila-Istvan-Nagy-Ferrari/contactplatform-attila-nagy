@@ -97,6 +97,16 @@ text-shadow:0 0 18px rgba(47,199,255,.18);
 display:inline;
 }
 
+h1,
+h2,
+h3,
+.hero-text p,
+.updates-text,
+.footer-note{
+user-select:none;
+-webkit-user-select:none;
+}
+
 .hero,
 .card{
 border:1px solid var(--line);
@@ -199,11 +209,10 @@ color:rgba(215,230,247,.62);
 
 input:focus,
 textarea:focus{
-border-color:var(--blue3);
-box-shadow:
-0 0 18px rgba(47,199,255,.35),
-inset 0 0 0 1px rgba(255,255,255,.04);
-background:rgba(2,12,32,.86);
+border-color:rgba(125,211,252,.25);
+box-shadow:none;
+background:rgba(2,12,32,.82);
+outline:none;
 }
 
 textarea{
