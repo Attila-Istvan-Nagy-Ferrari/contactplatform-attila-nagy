@@ -281,7 +281,8 @@ font-size:.9rem;
 line-height:1.3;
 }
 
-button{
+button,
+.signal-button{
 width:100%;
 border:none;
 padding:15px;
@@ -297,7 +298,16 @@ box-shadow:
 transition:.2s;
 }
 
-button:hover{
+.signal-button{
+display:block;
+margin-top:12px;
+text-align:center;
+text-decoration:none;
+font-family:'Inter',Arial,sans-serif;
+}
+
+button:hover,
+.signal-button:hover{
 transform:translateY(-1px);
 box-shadow:
 0 0 38px rgba(47,199,255,.56),
@@ -405,7 +415,8 @@ padding:8px 11px;
 margin-right:8px;
 }
 
-button{
+button,
+.signal-button{
 padding:14px;
 }
 
@@ -486,6 +497,12 @@ Toegestaan: JPG, PNG, PDF, DOCX, XLSX
 
 <button type="submit">Verzenden</button>
 </form>
+
+<a
+class="signal-button"
+href="https://signal.me/#eu/Ona2fVz77YkxF0oLhOcFjq7Dyt6cqu0f52JKm_Ashj5WvAHlRF1O15GPAXRLVBK-"
+target="_blank"
+rel="noopener noreferrer">Contact via Signal</a>
 
 <p class="footer-note">Berichten worden verwerkt via dit platform.</p>
 </div>
