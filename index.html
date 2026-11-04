@@ -447,6 +447,21 @@ button:focus-visible,
   outline-offset: 3px;
 }
 
+/* NIEUW: TWEE EVEN BREDE KNOPPEN NAAST ELKAAR */
+
+.form-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+  width: 100%;
+}
+
+.form-actions button {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+}
+
 .footer-note {
   width: 100%;
   margin-top: 8px;
@@ -561,6 +576,15 @@ button:focus-visible,
 
   .file-upload .file-picker-status {
     font-size: .85rem;
+  }
+
+  .form-actions {
+    gap: 9px;
+  }
+
+  .form-actions button {
+    padding: 13px 5px;
+    font-size: clamp(.78rem, 3.5vw, 1rem);
   }
 }
 
@@ -821,7 +845,11 @@ button:focus-visible,
         </small>
       </div>
 
-      <button type="submit" id="submitButton">Verzenden</button>
+      <!-- NIEUW: VERZENDEN EN WISSEN NAAST ELKAAR -->
+      <div class="form-actions">
+        <button type="submit" id="submitButton">Verzenden</button>
+        <button type="button" id="clearButton">Formulier wissen</button>
+      </div>
     </form>
 
     <a
@@ -857,6 +885,7 @@ const naamInput = document.getElementById("naam");
 const emailInput = document.getElementById("email");
 const berichtInput = document.getElementById("bericht");
 const submitButton = document.getElementById("submitButton");
+const clearButton = document.getElementById("clearButton");
 
 const attachment = document.getElementById("attachment");
 const pickerInput = document.getElementById("pickerInput");
@@ -1204,6 +1233,52 @@ function restoreSubmitButton() {
   submitButton.disabled = false;
   submitButton.textContent = "Verzenden";
 }
+
+/* NIEUW: FORMULIER EN OPGESLAGEN CONCEPT WISSEN */
+
+clearButton.addEventListener("click", function() {
+  /*
+    Ook de browser-eigen formulierstatus wissen.
+    De knop heeft type="button" en verstuurt niets.
+  */
+  form.reset();
+
+  naamInput.value = "";
+  emailInput.value = "";
+  berichtInput.value = "";
+
+  /*
+    Beide bestandsvelden legen.
+  */
+  attachment.value = "";
+  pickerInput.value = "";
+  savedFiles = [];
+
+  /*
+    Tijdelijk opgeslagen gegevens verwijderen.
+  */
+  if (draftStorage) {
+    try {
+      draftStorage.removeItem(storageKey);
+    } catch (error) {
+      console.warn(
+        "Het opgeslagen concept kon niet worden verwijderd.",
+        error
+      );
+    }
+  }
+
+  /*
+    Bestandsweergave en verzendknop herstellen.
+  */
+  updateFileDisplay();
+  restoreSubmitButton();
+
+  /*
+    Geen saveDraft() aanroepen:
+    het opgeslagen concept moet verwijderd blijven.
+  */
+});
 
 /* HERSTELLEN BIJ TERUGNAVIGEREN */
 
