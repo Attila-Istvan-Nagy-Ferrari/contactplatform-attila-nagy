@@ -514,6 +514,22 @@ button:focus-visible,
     transition: none;
   }
 }
+
+/* Luxe metalen sierbogen, binnen het profielkader en achter de inhoud. */
+.hero { isolation:isolate; }
+.hero .gold-corner { position:absolute; z-index:0; pointer-events:none; display:block; max-width:none; overflow:hidden; }
+.hero .gold-corner svg { width:100%; height:100%; display:block; }
+.hero .gold-corner.top { top:0; right:0; width:66%; height:46%; }
+.hero .gold-corner.bottom { bottom:0; left:0; width:27%; height:20%; }
+.hero > :not(.gold-corner) { position:relative; z-index:2; }
+.hero .profile-photo { z-index:3; }
+@media (max-width:980px) {
+  .hero .gold-corner.top { width:88%; height:30%; }
+  .hero .gold-corner.bottom { width:34%; height:10%; }
+  .hero h2 { font-size:clamp(1.08rem,5vw,2.2rem); white-space:nowrap; letter-spacing:-.035em; }
+}
+@media (max-width:380px) { .hero h2 { font-size:clamp(1rem,4.6vw,1.55rem); } }
+
 </style>
 </head>
 
@@ -529,6 +545,45 @@ button:focus-visible,
 <div class="container">
 
   <div class="hero">
+    <div class="gold-corner top" aria-hidden="true">
+      <svg viewBox="0 0 650 240" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="metalTop" x1=".13" y1=".02" x2=".91" y2=".96" gradientUnits="objectBoundingBox">
+            <stop offset="0" stop-color="#683400"/><stop offset=".14" stop-color="#bd790e"/>
+            <stop offset=".30" stop-color="#ffdc6e"/><stop offset=".40" stop-color="#fff6c4"/>
+            <stop offset=".48" stop-color="#efae22"/><stop offset=".63" stop-color="#a95f00"/>
+            <stop offset=".78" stop-color="#f9c34a"/><stop offset=".91" stop-color="#fff0a0"/>
+            <stop offset="1" stop-color="#915000"/>
+          </linearGradient>
+          <linearGradient id="topShine" x1="0" y1="0" x2="1" y2="1">
+            <stop stop-color="#fff9da"/><stop offset=".5" stop-color="#f5bd35"/><stop offset="1" stop-color="#6b3900"/>
+          </linearGradient>
+        </defs>
+        <path d="M150 0 H650 V240 C550 110 400 45 150 0Z" fill="url(#metalTop)"/>
+        <path d="M123 0 C337 12 541 68 650 186" fill="none" stroke="#5e3100" stroke-width="10" opacity=".66"/>
+        <path d="M126 0 C345 17 544 74 650 189" fill="none" stroke="url(#topShine)" stroke-width="5" opacity=".98"/>
+        <path d="M187 0 C410 26 562 96 650 220" fill="none" stroke="#fff5b5" stroke-width="3" opacity=".82"/>
+        <path d="M225 0 C441 37 574 109 650 235" fill="none" stroke="#8b4800" stroke-width="4" opacity=".75"/>
+      </svg>
+    </div>
+    <div class="gold-corner bottom" aria-hidden="true">
+      <svg viewBox="0 0 480 220" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="metalBottom" x1="0" y1="0" x2="1" y2="1">
+            <stop stop-color="#784000"/><stop offset=".19" stop-color="#d38a0b"/>
+            <stop offset=".35" stop-color="#ffe18a"/><stop offset=".47" stop-color="#fff8c8"/>
+            <stop offset=".61" stop-color="#e3a122"/><stop offset=".78" stop-color="#a65c00"/>
+            <stop offset=".90" stop-color="#f4c04d"/><stop offset="1" stop-color="#663300"/>
+          </linearGradient>
+        </defs>
+        <path d="M0 0 C42 110 120 180 390 220 H0Z" fill="url(#metalBottom)"/>
+        <path d="M0 12 C56 141 156 193 414 220" fill="none" stroke="#603000" stroke-width="10" opacity=".6"/>
+        <path d="M0 17 C62 145 160 194 411 220" fill="none" stroke="#fff6c0" stroke-width="5" opacity=".98"/>
+        <path d="M0 46 C66 165 158 206 355 220" fill="none" stroke="#fbd66c" stroke-width="3" opacity=".8"/>
+        <path d="M0 66 C57 178 147 211 310 220" fill="none" stroke="#8a4800" stroke-width="4" opacity=".7"/>
+      </svg>
+    </div>
+
     <img
       class="profile-photo"
       src="profile-website.png"
