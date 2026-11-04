@@ -21,9 +21,7 @@
   --blue: #1fb6ff;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
@@ -640,7 +638,6 @@ button:focus-visible,
     font-size: clamp(1rem, 4.6vw, 1.55rem);
   }
 }
-
 </style>
 </head>
 
@@ -838,11 +835,66 @@ const allowedExtensions = [
   "xlsx"
 ];
 
+/* BIJLAGEN BEHOUDEN BIJ TERUG / ANNULEREN */
+
+let savedFiles = [];
+let pickerWasOpened = false;
+
+function updateFileDisplay(files) {
+  if (!files || files.length === 0) {
+    filePickerStatus.textContent = "Geen bestand";
+    fileName.innerHTML =
+      "Max. 4 bestanden • 10 MB per bestand • 25 MB totaal<br>Toegestaan: JPG, PNG, PDF, DOCX, XLSX";
+    return;
+  }
+
+  if (files.length === 1) {
+    filePickerStatus.textContent = files[0].name;
+    fileName.textContent = "Geselecteerd: " + files[0].name;
+  } else {
+    filePickerStatus.textContent = files.length + " bestanden";
+    fileName.textContent = files.length + " bestanden geselecteerd.";
+  }
+}
+
+function restoreSavedFiles() {
+  if (savedFiles.length === 0) {
+    updateFileDisplay([]);
+    return;
+  }
+
+  if (attachment.files && attachment.files.length > 0) {
+    updateFileDisplay(Array.from(attachment.files));
+    return;
+  }
+
+  try {
+    const transfer = new DataTransfer();
+
+    savedFiles.forEach(function(file) {
+      transfer.items.add(file);
+    });
+
+    attachment.files = transfer.files;
+  } catch (error) {
+    console.warn(
+      "De browser ondersteunt het herstellen van bijlagen niet volledig.",
+      error
+    );
+  }
+
+  if (attachment.files && attachment.files.length > 0) {
+    updateFileDisplay(Array.from(attachment.files));
+  } else {
+    savedFiles = [];
+    updateFileDisplay([]);
+  }
+}
+
 function resetAttachment() {
   attachment.value = "";
-  filePickerStatus.textContent = "Geen bestand";
-  fileName.innerHTML =
-    "Max. 4 bestanden • 10 MB per bestand • 25 MB totaal<br>Toegestaan: JPG, PNG, PDF, DOCX, XLSX";
+  savedFiles = [];
+  updateFileDisplay([]);
 }
 
 function getFileExtension(fileName) {
@@ -913,20 +965,42 @@ function validateFiles(showAlert = true) {
     return false;
   }
 
-  if (files.length === 1) {
-    filePickerStatus.textContent = files[0].name;
-    fileName.textContent = "Geselecteerd: " + files[0].name;
-  } else {
-    filePickerStatus.textContent = files.length + " bestanden";
-    fileName.textContent = files.length + " bestanden geselecteerd.";
-  }
-
+  savedFiles = files.slice();
+  updateFileDisplay(files);
   return true;
 }
 
 if (attachment) {
+  attachment.addEventListener("click", function() {
+    pickerWasOpened = true;
+  });
+
+  attachment.addEventListener("cancel", function() {
+    pickerWasOpened = false;
+    restoreSavedFiles();
+  });
+
   attachment.addEventListener("change", function() {
+    pickerWasOpened = false;
+
+    if (!attachment.files || attachment.files.length === 0) {
+      restoreSavedFiles();
+      return;
+    }
+
     validateFiles(true);
+  });
+
+  window.addEventListener("focus", function() {
+    if (!pickerWasOpened) return;
+
+    pickerWasOpened = false;
+
+    setTimeout(function() {
+      if (!attachment.files || attachment.files.length === 0) {
+        restoreSavedFiles();
+      }
+    }, 250);
   });
 }
 
