@@ -293,7 +293,6 @@ textarea {
   font-size: 1rem;
   font-family: 'Inter', Arial, sans-serif;
   transition: .2s;
-  cursor: pointer;
 }
 
 .file-upload:hover {
@@ -331,6 +330,7 @@ textarea {
   gap: 12px;
   margin-bottom: 0;
   min-width: 0;
+  cursor: pointer;
 }
 
 .file-upload .file-picker-button {
@@ -737,9 +737,11 @@ button:focus-visible,
     <h3>Contact</h3>
 
     <form
+      id="contactForm"
       action="https://formspree.io/f/xpqojggj"
       method="POST"
       enctype="multipart/form-data"
+      autocomplete="on"
     >
       <input
         type="hidden"
@@ -751,12 +753,16 @@ button:focus-visible,
         type="text"
         name="_gotcha"
         style="display:none"
+        tabindex="-1"
+        autocomplete="off"
       >
 
       <input
         type="text"
         name="naam"
+        id="naam"
         placeholder="Naam"
+        autocomplete="name"
         required
       >
 
@@ -765,11 +771,13 @@ button:focus-visible,
         name="email"
         id="email"
         placeholder="E-mail"
+        autocomplete="email"
         required
       >
 
       <textarea
         name="bericht"
+        id="bericht"
         placeholder="Bericht"
         required
       ></textarea>
@@ -779,7 +787,7 @@ button:focus-visible,
           Bijlage toevoegen <small>(optioneel)</small>
         </span>
 
-        <!-- Dit veld bewaart de bijlagen voor verzending. -->
+        <!-- Bewaart de daadwerkelijke bijlagen voor Formspree -->
         <input
           type="file"
           name="attachment"
@@ -791,7 +799,7 @@ button:focus-visible,
           accept=".jpg,.jpeg,.png,.pdf,.docx,.xlsx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,image/jpeg,image/png"
         >
 
-        <!-- Dit veld opent uitsluitend de bestandskiezer. -->
+        <!-- Tijdelijke bestandskiezer -->
         <input
           type="file"
           id="pickerInput"
@@ -813,7 +821,7 @@ button:focus-visible,
         </small>
       </div>
 
-      <button type="submit">Verzenden</button>
+      <button type="submit" id="submitButton">Verzenden</button>
     </form>
 
     <a
@@ -831,151 +839,474 @@ button:focus-visible,
 </div>
 
 <script>
-let lastSubmit = 0;
-const form = document.querySelector("form");
+"use strict";
+
+/*
+  FORMULIERHERSTEL BIJ TERUGNAVIGEREN
+
+  - Tekstvelden worden tijdelijk in sessionStorage bewaard.
+  - De verzendknop wordt na terugnavigeren hersteld.
+  - Bestanden blijven behouden zolang de browser de pagina
+    inclusief de bestaande JavaScript-context bewaart.
+  - Bij een volledige herlading mogen browsers lokale
+    bestandsselecties om veiligheidsredenen verwijderen.
+*/
+
+const form = document.getElementById("contactForm");
+const naamInput = document.getElementById("naam");
+const emailInput = document.getElementById("email");
+const berichtInput = document.getElementById("bericht");
+const submitButton = document.getElementById("submitButton");
+
 const attachment = document.getElementById("attachment");
 const pickerInput = document.getElementById("pickerInput");
 const fileName = document.getElementById("fileName");
 const filePickerStatus = document.getElementById("filePickerStatus");
-const emailInput = document.getElementById("email");
+
 const maxFileSize = 10 * 1024 * 1024;
 const maxTotalSize = 25 * 1024 * 1024;
 const maxFiles = 4;
-const allowedExtensions = ["jpg", "jpeg", "png", "pdf", "docx", "xlsx"];
 
-/* De bewaarde bestanden staan los van de Windows- en Android-bestandskiezer. */
+const allowedExtensions = [
+  "jpg",
+  "jpeg",
+  "png",
+  "pdf",
+  "docx",
+  "xlsx"
+];
+
+const storageKey = "attila-contactformulier-concept-v1";
+
 let savedFiles = [];
+let lastSubmit = 0;
 
-function adjustEmptyFileStatus() {
-  if (savedFiles.length) return;
-  const row = document.querySelector(".file-picker-row");
-  const button = document.querySelector(".file-picker-button");
-  if (!row || !button) return;
-  const gap = parseFloat(getComputedStyle(row).columnGap) || 0;
-  const available = Math.max(0, row.clientWidth - button.offsetWidth - gap);
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
-  if (!ctx) {
-    filePickerStatus.textContent = "Geen bestand";
-    return;
-  }
-  ctx.font = getComputedStyle(filePickerStatus).font;
-  filePickerStatus.textContent = ctx.measureText("Geen bestanden gekozen").width + 3 <= available
-    ? "Geen bestanden gekozen" : "Geen bestand";
-}
+/* VEILIG TOEGANG KRIJGEN TOT TIJDELIJKE OPSLAG */
 
-function updateFileDisplay() {
-  if (!savedFiles.length) {
-    fileName.innerHTML = "Max. 4 bestanden • 10 MB per bestand • 25 MB totaal<br>Toegestaan: JPG, PNG, PDF, DOCX, XLSX";
-    adjustEmptyFileStatus();
-  } else if (savedFiles.length === 1) {
-    filePickerStatus.textContent = savedFiles[0].name;
-    fileName.textContent = "Geselecteerd: " + savedFiles[0].name;
-  } else {
-    filePickerStatus.textContent = savedFiles.length + " bestanden";
-    fileName.textContent = savedFiles.length + " bestanden geselecteerd: " + savedFiles.map(f => f.name).join(", ");
+function getDraftStorage() {
+  try {
+    const storage = window.sessionStorage;
+    const testKey = storageKey + "-test";
+    storage.setItem(testKey, "1");
+    storage.removeItem(testKey);
+    return storage;
+  } catch (error) {
+    return null;
   }
 }
+
+const draftStorage = getDraftStorage();
+
+/* TEKSTVELDEN BEWAREN */
+
+function saveDraft() {
+  if (!draftStorage) return;
+
+  try {
+    const draft = {
+      naam: naamInput.value,
+      email: emailInput.value,
+      bericht: berichtInput.value
+    };
+
+    draftStorage.setItem(
+      storageKey,
+      JSON.stringify(draft)
+    );
+  } catch (error) {
+    console.warn("Concept kon niet worden bewaard.", error);
+  }
+}
+
+/* TEKSTVELDEN HERSTELLEN */
+
+function restoreDraft() {
+  if (!draftStorage) return;
+
+  try {
+    const raw = draftStorage.getItem(storageKey);
+    if (!raw) return;
+
+    const draft = JSON.parse(raw);
+
+    if (!naamInput.value && typeof draft.naam === "string") {
+      naamInput.value = draft.naam;
+    }
+
+    if (!emailInput.value && typeof draft.email === "string") {
+      emailInput.value = draft.email;
+    }
+
+    if (!berichtInput.value && typeof draft.bericht === "string") {
+      berichtInput.value = draft.bericht;
+    }
+  } catch (error) {
+    console.warn("Concept kon niet worden hersteld.", error);
+  }
+}
+
+[naamInput, emailInput, berichtInput].forEach(function(input) {
+  input.addEventListener("input", saveDraft);
+  input.addEventListener("change", saveDraft);
+});
+
+/* BESTANDEN CONTROLEREN */
 
 function checkFiles(files, showAlert = true) {
-  let total = 0;
+  let totalSize = 0;
   let error = "";
-  if (files.length > maxFiles) error = "Je kunt maximaal 4 bestanden tegelijk toevoegen.";
-  if (!error) for (const file of files) {
-    total += file.size;
-    const ext = file.name.split(".").pop().toLowerCase();
-    if (!allowedExtensions.includes(ext)) {
-      error = "Bestandstype niet toegestaan: " + file.name + ".";
-      break;
-    }
-    if (file.size > maxFileSize) {
-      error = "Bestand te groot: " + file.name + ". Maximaal 10 MB per bestand toegestaan.";
-      break;
+
+  if (files.length > maxFiles) {
+    error = "Je kunt maximaal 4 bestanden tegelijk toevoegen.";
+  }
+
+  if (!error) {
+    for (const file of files) {
+      totalSize += file.size;
+
+      const extension = file.name
+        .split(".")
+        .pop()
+        .toLowerCase();
+
+      if (!allowedExtensions.includes(extension)) {
+        error = "Bestandstype niet toegestaan: " + file.name + ".";
+        break;
+      }
+
+      if (file.size > maxFileSize) {
+        error =
+          "Bestand te groot: " + file.name +
+          ". Maximaal 10 MB per bestand toegestaan.";
+        break;
+      }
     }
   }
-  if (!error && total > maxTotalSize) error = "De totale bijlagegrootte is te hoog. Maximaal 25 MB totaal toegestaan.";
-  if (error && showAlert) alert(error);
+
+  if (!error && totalSize > maxTotalSize) {
+    error =
+      "De totale bijlagegrootte is te hoog. " +
+      "Maximaal 25 MB totaal toegestaan.";
+  }
+
+  if (error && showAlert) {
+    alert(error);
+  }
+
   return !error;
 }
 
-/* Nieuwe bestanden worden toegevoegd; een dubbele selectie telt niet tweemaal. */
-function mergeFiles(oldFiles, newFiles) {
-  const merged = oldFiles.slice();
-  for (const file of newFiles) {
-    const exists = merged.some(previous =>
-      previous.name === file.name &&
-      previous.size === file.size &&
-      previous.lastModified === file.lastModified
-    );
-    if (!exists) merged.push(file);
+/* LEGE BESTANDSSTATUS AANPASSEN AAN SCHERMBREEDTE */
+
+function adjustEmptyFileStatus() {
+  if (savedFiles.length > 0) return;
+
+  const row = document.querySelector(".file-picker-row");
+  const button = document.querySelector(".file-picker-button");
+
+  if (!row || !button) return;
+
+  const gap =
+    parseFloat(getComputedStyle(row).columnGap) || 0;
+
+  const availableWidth = Math.max(
+    0,
+    row.clientWidth - button.offsetWidth - gap
+  );
+
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d");
+
+  if (!context) {
+    filePickerStatus.textContent = "Geen bestand";
+    return;
   }
+
+  context.font = getComputedStyle(filePickerStatus).font;
+
+  const fullText = "Geen bestanden gekozen";
+  const shortText = "Geen bestand";
+
+  const requiredWidth =
+    context.measureText(fullText).width;
+
+  filePickerStatus.textContent =
+    requiredWidth + 3 <= availableWidth
+      ? fullText
+      : shortText;
+}
+
+/* GESELECTEERDE BESTANDEN TONEN */
+
+function updateFileDisplay() {
+  if (savedFiles.length === 0) {
+    filePickerStatus.textContent = "Geen bestanden gekozen";
+
+    fileName.innerHTML =
+      "Max. 4 bestanden • 10 MB per bestand • " +
+      "25 MB totaal<br>" +
+      "Toegestaan: JPG, PNG, PDF, DOCX, XLSX";
+
+    adjustEmptyFileStatus();
+    return;
+  }
+
+  if (savedFiles.length === 1) {
+    filePickerStatus.textContent = savedFiles[0].name;
+    fileName.textContent =
+      "Geselecteerd: " + savedFiles[0].name;
+    return;
+  }
+
+  filePickerStatus.textContent =
+    savedFiles.length + " bestanden";
+
+  fileName.textContent =
+    savedFiles.length +
+    " bestanden geselecteerd: " +
+    savedFiles.map(function(file) {
+      return file.name;
+    }).join(", ");
+}
+
+/* BESTANDEN SAMENVOEGEN ZONDER DUBBELEN */
+
+function mergeFiles(existingFiles, newFiles) {
+  const merged = existingFiles.slice();
+
+  for (const file of newFiles) {
+    const alreadyExists = merged.some(function(previous) {
+      return (
+        previous.name === file.name &&
+        previous.size === file.size &&
+        previous.lastModified === file.lastModified
+      );
+    });
+
+    if (!alreadyExists) {
+      merged.push(file);
+    }
+  }
+
   return merged;
 }
 
+/* BESTANDEN KOPPELEN AAN HET ECHTE FORMULIER */
+
 function applyFiles(files) {
   const transfer = new DataTransfer();
-  for (const file of files) transfer.items.add(file);
+
+  files.forEach(function(file) {
+    transfer.items.add(file);
+  });
+
   attachment.files = transfer.files;
-  if (attachment.files.length !== files.length) throw new Error("Bijlagen konden niet volledig worden opgeslagen.");
+
+  if (attachment.files.length !== files.length) {
+    throw new Error(
+      "De geselecteerde bestanden konden niet volledig worden gekoppeld."
+    );
+  }
+
   savedFiles = files.slice();
   updateFileDisplay();
 }
 
-/* Annuleren verandert niets: alleen een echte, niet-lege keuze wordt verwerkt. */
+/* BESTANDEN KIEZEN */
+
 pickerInput.addEventListener("change", function() {
-  const chosen = Array.from(pickerInput.files || []);
+  const selectedFiles = Array.from(
+    pickerInput.files || []
+  );
+
+  /*
+    Het tijdelijke invoerveld mag worden geleegd.
+    De echte bestanden blijven apart bewaard.
+  */
   pickerInput.value = "";
-  if (!chosen.length) return;
-  const proposed = mergeFiles(savedFiles, chosen);
-  if (!checkFiles(proposed, true)) return;
+
+  if (selectedFiles.length === 0) {
+    updateFileDisplay();
+    return;
+  }
+
+  const proposedFiles = mergeFiles(
+    savedFiles,
+    selectedFiles
+  );
+
+  if (!checkFiles(proposedFiles, true)) {
+    updateFileDisplay();
+    return;
+  }
+
   try {
-    applyFiles(proposed);
+    applyFiles(proposedFiles);
   } catch (error) {
     console.error(error);
-    alert("De bijlagen konden niet worden bewaard in deze browser. Probeer het opnieuw.");
+
+    alert(
+      "De bestanden konden niet worden opgeslagen " +
+      "in deze browser. Probeer het opnieuw."
+    );
+
     updateFileDisplay();
   }
 });
 
-/* Sommige browsers melden annuleren expliciet; bestaande bijlagen blijven staan. */
+/* ANNULEREN IN BESTANDSKIEZER */
+
 pickerInput.addEventListener("cancel", function() {
   updateFileDisplay();
 });
 
-window.addEventListener("resize", adjustEmptyFileStatus);
-if (document.fonts && document.fonts.ready) {
-  document.fonts.ready.then(adjustEmptyFileStatus);
+/* CONTROLEER WAT DE BROWSER NOG HEEFT BEWAARD */
+
+function synchronizeFilesAfterReturn() {
+  const browserFiles = Array.from(
+    attachment.files || []
+  );
+
+  /*
+    Bij herstel vanuit de browsercache bestaat
+    savedFiles doorgaans nog.
+
+    Bij een nieuwe JavaScript-context kan het
+    oorspronkelijke bestandsveld eventueel nog
+    bestanden bevatten.
+  */
+
+  if (savedFiles.length === 0 && browserFiles.length > 0) {
+    if (checkFiles(browserFiles, false)) {
+      savedFiles = browserFiles.slice();
+    }
+  }
+
+  /*
+    Als de browser bestanden heeft verwijderd,
+    tonen we niet ten onrechte dat ze nog
+    klaarstaan voor verzending.
+  */
+
+  if (
+    savedFiles.length > 0 &&
+    browserFiles.length !== savedFiles.length
+  ) {
+    savedFiles = browserFiles.slice();
+  }
+
+  updateFileDisplay();
 }
-updateFileDisplay();
+
+/* VERZENDKNOP HERSTELLEN */
+
+function restoreSubmitButton() {
+  submitButton.disabled = false;
+  submitButton.textContent = "Verzenden";
+}
+
+/* HERSTELLEN BIJ TERUGNAVIGEREN */
+
+window.addEventListener("pageshow", function() {
+  restoreSubmitButton();
+  restoreDraft();
+  synchronizeFilesAfterReturn();
+});
+
+/*
+  pagehide bewaart het concept voordat de browser
+  naar een andere pagina gaat.
+
+  Er wordt geen unload-handler toegevoegd, zodat
+  de browser zijn back-forward-cache kan gebruiken.
+*/
+
+window.addEventListener("pagehide", function() {
+  saveDraft();
+});
+
+/* SCHERMBREEDTE */
+
+window.addEventListener("resize", function() {
+  adjustEmptyFileStatus();
+});
+
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(function() {
+    adjustEmptyFileStatus();
+  });
+}
+
+/* FORMULIER VERZENDEN */
 
 form.addEventListener("submit", function(event) {
   const email = emailInput.value.trim();
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+
+  const emailPattern =
+    /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+  if (!emailPattern.test(email)) {
     event.preventDefault();
     alert("Vul een geldig e-mailadres in.");
     emailInput.focus();
     return;
   }
+
+  /*
+    Vóór verzending het concept bewaren.
+    Bij terugnavigeren blijft de tekst beschikbaar.
+  */
+  saveDraft();
+
   if (!checkFiles(savedFiles, true)) {
     event.preventDefault();
     return;
   }
+
+  /*
+    Controleren of de bijlagen werkelijk in
+    het verzendbare formulier aanwezig zijn.
+  */
+
   if (attachment.files.length !== savedFiles.length) {
     event.preventDefault();
-    alert("De bijlagen zijn niet correct aan het formulier gekoppeld. Kies ze opnieuw.");
+
+    alert(
+      "De bijlagen zijn niet meer beschikbaar. " +
+      "Selecteer ze opnieuw voordat je verzendt."
+    );
+
+    synchronizeFilesAfterReturn();
     return;
   }
+
   const now = Date.now();
+
   if (now - lastSubmit < 5000) {
     event.preventDefault();
     alert("Even wachten...");
     return;
   }
+
   lastSubmit = now;
-  const submitButton = form.querySelector('button[type="submit"]');
+
+  /*
+    De gewone Formspree-verzending blijft behouden.
+
+    De knop wordt bij terugnavigeren via pageshow
+    opnieuw geactiveerd.
+  */
+
   submitButton.disabled = true;
   submitButton.textContent = "Bezig met verzenden...";
 });
+
+/* EERSTE WEERGAVE */
+
+restoreDraft();
+synchronizeFilesAfterReturn();
+restoreSubmitButton();
+
 </script>
 
 <!-- Cloudflare Web Analytics -->
