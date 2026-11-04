@@ -368,7 +368,10 @@ textarea {
   font-size: .9rem;
   font-weight: 400;
   color: var(--soft);
-  overflow-wrap: anywhere;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  overflow-wrap: normal;
 }
 
 .file-upload:focus-within .file-picker-button {
@@ -842,22 +845,45 @@ const allowedExtensions = [
 let savedFiles = [];
 let pickerWasOpened = false;
 
+/* CONTROLEER OF DE VOLLEDIGE TEKST OP ÉÉN REGEL PAST */
+
 function adjustEmptyFileStatus() {
-  if (savedFiles.length > 0) return;
+  if (attachment.files && attachment.files.length > 0) {
+    return;
+  }
 
   const row = document.querySelector(".file-picker-row");
   const button = document.querySelector(".file-picker-button");
 
   if (!row || !button) return;
 
-  filePickerStatus.textContent = "Geen bestanden gekozen";
+  const fullText = "Geen bestanden gekozen";
+  const shortText = "Geen bestand";
 
   const gap = parseFloat(getComputedStyle(row).columnGap) || 0;
-  const availableWidth = row.clientWidth - button.offsetWidth - gap;
+  const availableWidth = Math.max(
+    0,
+    row.clientWidth - button.offsetWidth - gap
+  );
 
-  if (filePickerStatus.scrollWidth > availableWidth) {
-    filePickerStatus.textContent = "Geen bestand";
+  const style = getComputedStyle(filePickerStatus);
+
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d");
+
+  if (!context) {
+    filePickerStatus.textContent = shortText;
+    return;
   }
+
+  context.font = style.font;
+
+  const fullTextWidth = context.measureText(fullText).width;
+
+  filePickerStatus.textContent =
+    fullTextWidth <= availableWidth
+      ? fullText
+      : shortText;
 }
 
 function updateFileDisplay(files) {
@@ -865,6 +891,7 @@ function updateFileDisplay(files) {
     filePickerStatus.textContent = "Geen bestanden gekozen";
     fileName.innerHTML =
       "Max. 4 bestanden • 10 MB per bestand • 25 MB totaal<br>Toegestaan: JPG, PNG, PDF, DOCX, XLSX";
+
     adjustEmptyFileStatus();
     return;
   }
@@ -1032,6 +1059,14 @@ window.addEventListener("resize", function() {
 });
 
 adjustEmptyFileStatus();
+
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(function() {
+    if (!attachment.files || attachment.files.length === 0) {
+      adjustEmptyFileStatus();
+    }
+  });
+}
 
 form.addEventListener("submit", function(e) {
   if (!validateEmail()) {
