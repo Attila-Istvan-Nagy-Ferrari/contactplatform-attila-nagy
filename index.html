@@ -293,6 +293,7 @@ textarea {
   font-size: 1rem;
   font-family: 'Inter', Arial, sans-serif;
   transition: .2s;
+  cursor: pointer;
 }
 
 .file-upload:hover {
@@ -312,13 +313,67 @@ textarea {
   font-weight: 400;
 }
 
-.file-upload input {
-  width: 100%;
-  margin: 0;
+/* EIGEN BESTANDSKIEZER */
+
+.file-upload .file-picker-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
   padding: 0;
-  border: none;
-  background: transparent;
+  margin: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.file-upload .file-picker-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 0;
+  min-width: 0;
+}
+
+.file-upload .file-picker-button {
+  display: inline-block;
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 9px 13px;
+  border-radius: 10px;
+  font-size: .9rem;
+  color: #241600 !important;
+  border: 1px solid #fff0ad;
+  background: linear-gradient(
+    115deg,
+    #9b5a00 0%,
+    #e9ab25 17%,
+    #fff0a5 37%,
+    #ffd45c 52%,
+    #e4a11c 73%,
+    #fff0a0 89%,
+    #b7770a 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.8),
+    inset 0 -2px 0 rgba(120,63,0,.35),
+    0 0 17px rgba(255,183,24,.42);
+  font-family: 'Inter', Arial, sans-serif;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.file-upload .file-picker-status {
+  display: inline-block;
+  margin: 0;
+  min-width: 0;
+  font-size: .9rem;
+  font-weight: 400;
   color: var(--soft);
+  overflow-wrap: anywhere;
+}
+
+.file-upload:focus-within .file-picker-button {
+  outline: 3px solid #ffe2a0;
+  outline-offset: 3px;
 }
 
 .file-name {
@@ -329,11 +384,10 @@ textarea {
   line-height: 1.3;
 }
 
-/* ALLE DRIE DE KNOPPEN GOUD */
+/* GOUDEN KNOPPEN */
 
 button,
-.signal-button,
-.file-upload input::file-selector-button {
+.signal-button {
   color: #241600 !important;
   border: 1px solid #fff0ad !important;
   background: linear-gradient(
@@ -372,21 +426,10 @@ button,
   margin-top: 12px;
 }
 
-.file-upload input::file-selector-button {
-  margin-right: 12px;
-  padding: 9px 13px;
-  border-radius: 10px;
-}
-
-button:hover,
-.signal-button:hover,
-.file-upload input::file-selector-button:hover {
-  filter: brightness(1.09);
-  box-shadow: 0 0 27px rgba(255,193,35,.65) !important;
-}
-
 button:hover,
 .signal-button:hover {
+  filter: brightness(1.09);
+  box-shadow: 0 0 27px rgba(255,193,35,.65) !important;
   transform: translateY(-1px);
 }
 
@@ -496,12 +539,25 @@ button:focus-visible,
   }
 }
 
-/* ALLE BESTANDSTYPEN OP ÉÉN REGEL OP TELEFOONS */
+/* BESTANDSTYPEN OP MOBIEL */
 
 @media (max-width: 600px) {
   .file-name {
     font-size: .78rem;
     letter-spacing: -.15px;
+  }
+
+  .file-upload .file-picker-row {
+    gap: 10px;
+  }
+
+  .file-upload .file-picker-button {
+    font-size: .85rem;
+    padding: 9px 11px;
+  }
+
+  .file-upload .file-picker-status {
+    font-size: .85rem;
   }
 }
 
@@ -559,7 +615,7 @@ button:focus-visible,
   z-index: 3;
 }
 
-/* MOBIELE GOUDEN BOOG RECHTSBOVEN GECORRIGEERD */
+/* MOBIELE GOUDEN BOOG RECHTSBOVEN */
 
 @media (max-width: 980px) {
   .hero .gold-corner.top {
@@ -725,9 +781,16 @@ button:focus-visible,
           type="file"
           name="attachment"
           id="attachment"
+          class="file-picker-input"
+          aria-label="Bestanden kiezen"
           multiple
           accept=".jpg,.jpeg,.png,.pdf,.docx,.xlsx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,image/jpeg,image/png"
         >
+
+        <span class="file-picker-row">
+          <span class="file-picker-button" aria-hidden="true">Bestanden kiezen</span>
+          <span class="file-picker-status" id="filePickerStatus" aria-live="polite">Geen bestand</span>
+        </span>
 
         <small class="file-name" id="fileName">
           Max. 4 bestanden • 10 MB per bestand • 25 MB totaal
@@ -759,6 +822,7 @@ let lastSubmit = 0;
 const form = document.querySelector("form");
 const attachment = document.getElementById("attachment");
 const fileName = document.getElementById("fileName");
+const filePickerStatus = document.getElementById("filePickerStatus");
 const emailInput = document.getElementById("email");
 
 const maxFileSize = 10 * 1024 * 1024;
@@ -776,6 +840,7 @@ const allowedExtensions = [
 
 function resetAttachment() {
   attachment.value = "";
+  filePickerStatus.textContent = "Geen bestand";
   fileName.innerHTML =
     "Max. 4 bestanden • 10 MB per bestand • 25 MB totaal<br>Toegestaan: JPG, PNG, PDF, DOCX, XLSX";
 }
@@ -849,8 +914,10 @@ function validateFiles(showAlert = true) {
   }
 
   if (files.length === 1) {
+    filePickerStatus.textContent = files[0].name;
     fileName.textContent = "Geselecteerd: " + files[0].name;
   } else {
+    filePickerStatus.textContent = files.length + " bestanden";
     fileName.textContent = files.length + " bestanden geselecteerd.";
   }
 
