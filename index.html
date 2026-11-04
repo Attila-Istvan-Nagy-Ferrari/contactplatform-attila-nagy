@@ -786,6 +786,7 @@ button:focus-visible,
           id="attachment"
           class="file-picker-input"
           aria-label="Geselecteerde bijlagen"
+          tabindex="-1"
           multiple
           accept=".jpg,.jpeg,.png,.pdf,.docx,.xlsx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,image/jpeg,image/png"
         >
@@ -831,235 +832,147 @@ button:focus-visible,
 
 <script>
 let lastSubmit = 0;
-
 const form = document.querySelector("form");
 const attachment = document.getElementById("attachment");
 const pickerInput = document.getElementById("pickerInput");
 const fileName = document.getElementById("fileName");
 const filePickerStatus = document.getElementById("filePickerStatus");
 const emailInput = document.getElementById("email");
-
 const maxFileSize = 10 * 1024 * 1024;
 const maxTotalSize = 25 * 1024 * 1024;
 const maxFiles = 4;
+const allowedExtensions = ["jpg", "jpeg", "png", "pdf", "docx", "xlsx"];
 
-const allowedExtensions = [
-  "jpg",
-  "jpeg",
-  "png",
-  "pdf",
-  "docx",
-  "xlsx"
-];
-
-/*
-  Het formulier bewaart de geselecteerde bijlagen
-  in attachment.
-
-  pickerInput is een aparte tijdelijke bestandskiezer.
-
-  Daardoor raakt het formulier zijn bijlagen niet kwijt
-  wanneer de gebruiker op Terug of Annuleren drukt.
-*/
+/* De bewaarde bestanden staan los van de Windows- en Android-bestandskiezer. */
+let savedFiles = [];
 
 function adjustEmptyFileStatus() {
-  if (attachment.files.length > 0) {
-    return;
-  }
-
+  if (savedFiles.length) return;
   const row = document.querySelector(".file-picker-row");
   const button = document.querySelector(".file-picker-button");
-
-  if (!row || !button) {
-    return;
-  }
-
-  const fullText = "Geen bestanden gekozen";
-  const shortText = "Geen bestand";
-
+  if (!row || !button) return;
   const gap = parseFloat(getComputedStyle(row).columnGap) || 0;
-
-  const availableWidth = Math.max(
-    0,
-    row.clientWidth - button.offsetWidth - gap
-  );
-
-  const style = getComputedStyle(filePickerStatus);
-
+  const available = Math.max(0, row.clientWidth - button.offsetWidth - gap);
   const canvas = document.createElement("canvas");
-  const context = canvas.getContext("2d");
-
-  if (!context) {
-    filePickerStatus.textContent = shortText;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) {
+    filePickerStatus.textContent = "Geen bestand";
     return;
   }
-
-  context.font = style.font;
-
-  const fullTextWidth = context.measureText(fullText).width;
-
-  filePickerStatus.textContent =
-    fullTextWidth + 2 <= availableWidth
-      ? fullText
-      : shortText;
+  ctx.font = getComputedStyle(filePickerStatus).font;
+  filePickerStatus.textContent = ctx.measureText("Geen bestanden gekozen").width + 3 <= available
+    ? "Geen bestanden gekozen" : "Geen bestand";
 }
 
 function updateFileDisplay() {
-  const files = Array.from(attachment.files || []);
-
-  if (files.length === 0) {
-    filePickerStatus.textContent = "Geen bestanden gekozen";
-
-    fileName.innerHTML =
-      "Max. 4 bestanden • 10 MB per bestand • 25 MB totaal<br>Toegestaan: JPG, PNG, PDF, DOCX, XLSX";
-
+  if (!savedFiles.length) {
+    fileName.innerHTML = "Max. 4 bestanden • 10 MB per bestand • 25 MB totaal<br>Toegestaan: JPG, PNG, PDF, DOCX, XLSX";
     adjustEmptyFileStatus();
-    return;
-  }
-
-  if (files.length === 1) {
-    filePickerStatus.textContent = files[0].name;
-    fileName.textContent = "Geselecteerd: " + files[0].name;
+  } else if (savedFiles.length === 1) {
+    filePickerStatus.textContent = savedFiles[0].name;
+    fileName.textContent = "Geselecteerd: " + savedFiles[0].name;
   } else {
-    filePickerStatus.textContent = files.length + " bestanden";
-    fileName.textContent = files.length + " bestanden geselecteerd.";
+    filePickerStatus.textContent = savedFiles.length + " bestanden";
+    fileName.textContent = savedFiles.length + " bestanden geselecteerd: " + savedFiles.map(f => f.name).join(", ");
   }
-}
-
-function getFileExtension(name) {
-  return name.split(".").pop().toLowerCase();
 }
 
 function checkFiles(files, showAlert = true) {
-  let totalSize = 0;
+  let total = 0;
   let error = "";
-
-  if (files.length > maxFiles) {
-    error = "Je kunt maximaal 4 bestanden tegelijk toevoegen.";
-  }
-
-  if (!error) {
-    for (const file of files) {
-      totalSize += file.size;
-
-      const extension = getFileExtension(file.name);
-
-      if (!allowedExtensions.includes(extension)) {
-        error = "Bestandstype niet toegestaan: " + file.name + ".";
-        break;
-      }
-
-      if (file.size > maxFileSize) {
-        error =
-          "Bestand te groot: " + file.name +
-          ". Maximaal 10 MB per bestand toegestaan.";
-        break;
-      }
+  if (files.length > maxFiles) error = "Je kunt maximaal 4 bestanden tegelijk toevoegen.";
+  if (!error) for (const file of files) {
+    total += file.size;
+    const ext = file.name.split(".").pop().toLowerCase();
+    if (!allowedExtensions.includes(ext)) {
+      error = "Bestandstype niet toegestaan: " + file.name + ".";
+      break;
+    }
+    if (file.size > maxFileSize) {
+      error = "Bestand te groot: " + file.name + ". Maximaal 10 MB per bestand toegestaan.";
+      break;
     }
   }
-
-  if (!error && totalSize > maxTotalSize) {
-    error =
-      "De totale bijlagegrootte is te hoog. Maximaal 25 MB totaal toegestaan.";
-  }
-
-  if (error && showAlert) {
-    alert(error);
-  }
-
+  if (!error && total > maxTotalSize) error = "De totale bijlagegrootte is te hoog. Maximaal 25 MB totaal toegestaan.";
+  if (error && showAlert) alert(error);
   return !error;
 }
 
-/*
-  Alleen een geldige nieuwe selectie vervangt
-  de bestaande bestanden.
-
-  Annuleren geeft geen nieuwe selectie en
-  verandert dus niets aan attachment.
-*/
-
-pickerInput.addEventListener("change", function() {
-  const selected = Array.from(pickerInput.files || []);
-
-  if (selected.length === 0) {
-    return;
-  }
-
-  if (!checkFiles(selected, true)) {
-    pickerInput.value = "";
-    return;
-  }
-
-  try {
-    const transfer = new DataTransfer();
-
-    selected.forEach(function(file) {
-      transfer.items.add(file);
-    });
-
-    attachment.files = transfer.files;
-
-    if (attachment.files.length !== selected.length) {
-      throw new Error("Niet alle bijlagen zijn overgenomen.");
-    }
-
-    updateFileDisplay();
-  } catch (error) {
-    console.error(error);
-
-    alert(
-      "De bestanden konden niet worden overgenomen. Probeer een andere browser."
+/* Nieuwe bestanden worden toegevoegd; een dubbele selectie telt niet tweemaal. */
+function mergeFiles(oldFiles, newFiles) {
+  const merged = oldFiles.slice();
+  for (const file of newFiles) {
+    const exists = merged.some(previous =>
+      previous.name === file.name &&
+      previous.size === file.size &&
+      previous.lastModified === file.lastModified
     );
+    if (!exists) merged.push(file);
   }
-
-  /*
-    De tijdelijke bestandskiezer wordt geleegd.
-    De echte formulierbijlagen blijven bewaard.
-  */
-  pickerInput.value = "";
-});
-
-window.addEventListener("resize", function() {
-  adjustEmptyFileStatus();
-});
-
-if (document.fonts && document.fonts.ready) {
-  document.fonts.ready.then(function() {
-    adjustEmptyFileStatus();
-  });
+  return merged;
 }
 
+function applyFiles(files) {
+  const transfer = new DataTransfer();
+  for (const file of files) transfer.items.add(file);
+  attachment.files = transfer.files;
+  if (attachment.files.length !== files.length) throw new Error("Bijlagen konden niet volledig worden opgeslagen.");
+  savedFiles = files.slice();
+  updateFileDisplay();
+}
+
+/* Annuleren verandert niets: alleen een echte, niet-lege keuze wordt verwerkt. */
+pickerInput.addEventListener("change", function() {
+  const chosen = Array.from(pickerInput.files || []);
+  pickerInput.value = "";
+  if (!chosen.length) return;
+  const proposed = mergeFiles(savedFiles, chosen);
+  if (!checkFiles(proposed, true)) return;
+  try {
+    applyFiles(proposed);
+  } catch (error) {
+    console.error(error);
+    alert("De bijlagen konden niet worden bewaard in deze browser. Probeer het opnieuw.");
+    updateFileDisplay();
+  }
+});
+
+/* Sommige browsers melden annuleren expliciet; bestaande bijlagen blijven staan. */
+pickerInput.addEventListener("cancel", function() {
+  updateFileDisplay();
+});
+
+window.addEventListener("resize", adjustEmptyFileStatus);
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(adjustEmptyFileStatus);
+}
 updateFileDisplay();
 
-form.addEventListener("submit", function(e) {
+form.addEventListener("submit", function(event) {
   const email = emailInput.value.trim();
-
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-
-  if (!emailPattern.test(email)) {
-    e.preventDefault();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+    event.preventDefault();
     alert("Vul een geldig e-mailadres in.");
     emailInput.focus();
     return;
   }
-
-  if (!checkFiles(Array.from(attachment.files), true)) {
-    e.preventDefault();
+  if (!checkFiles(savedFiles, true)) {
+    event.preventDefault();
     return;
   }
-
+  if (attachment.files.length !== savedFiles.length) {
+    event.preventDefault();
+    alert("De bijlagen zijn niet correct aan het formulier gekoppeld. Kies ze opnieuw.");
+    return;
+  }
   const now = Date.now();
-
   if (now - lastSubmit < 5000) {
-    e.preventDefault();
+    event.preventDefault();
     alert("Even wachten...");
     return;
   }
-
   lastSubmit = now;
-
   const submitButton = form.querySelector('button[type="submit"]');
-
   submitButton.disabled = true;
   submitButton.textContent = "Bezig met verzenden...";
 });
